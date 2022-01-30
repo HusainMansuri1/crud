@@ -1,0 +1,25 @@
+/*Import Vairables*/
+@import 'abstracts/variables';
+
+/*Base function & mixins*/
+@import 'abstracts/functions';
+@import 'abstracts/mixins';
+
+/*Reset CSS*/
+@import 'base/reset';
+
+/* Container */
+@include container();
+
+/* THEME CSS */
+@import 'theme/theme';
+@import 'theme/header';
+@import 'theme/footer';
+
+/*********** STICKY FOOTER(START)  **************/
+html,
+body,
+.root-wrapper{display: flex;flex-direction: column;}
+.root-wrapper{min-height: 100vh;}
+.site-main{flex-grow: 1;}
+/*********** STICKY FOOTER(END)  **************/
