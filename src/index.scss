@@ -1,1 +1,138 @@
-@import './sass/style.scss';
+/* css reset */
+html {
+  -moz-text-size-adjust: none;
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  -ms-text-size-adjust: 100%;
+}
+body {
+  // font-family: $font-primary, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  word-wrap: break-word;
+}
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+a {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+a:hover {
+  cursor: pointer;
+}
+img {
+  border: 0;
+  vertical-align: middle;
+}
+ul {
+  list-style: none;
+}
+li {
+  list-style-position: inside;
+}
+b,
+strong {
+  font-weight: normal;
+}
+textarea {
+  resize: none;
+}
+input,
+textarea,
+select {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: normal;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+button,
+input[type="submit"] {
+  cursor: pointer;
+}
+input:focus,
+textarea:focus {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  outline: none;
+}
+button {
+  border: none;
+  background: transparent;
+  outline: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 16px;
+  font-weight: normal;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section {
+  display: block;
+}
+/*scroll bar css*/
+// html {
+//   scrollbar-color: $color-primary #dedede;
+//   scrollbar-width: thin;
+// }
+// ::-webkit-scrollbar,
+// ::-webkit-scrollbar:horizontal {
+//   width: 7px;
+//   height: 3px;
+//   background: #dedede;
+// }
+// ::-webkit-scrollbar-thumb,
+// ::-webkit-scrollbar-thumb:horizontal {
+//   border-left: 1px solid #dedede;
+//   border-radius: 5px;
+//   background: $color-primary;
+// }
+
+/*********** STICKY FOOTER(START)  **************/
+html,
+body,
+.root-wrapper{display: flex;flex-direction: column;}
+.root-wrapper{min-height: 100vh;}
+.site-main{flex-grow: 1;}
+/*********** STICKY FOOTER(END)  **************/
+
+/*********** Container (START)  **************/
+.container{
+  max-width: 1230px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  position: relative;
+}
+/*********** Container (START)  **************/
