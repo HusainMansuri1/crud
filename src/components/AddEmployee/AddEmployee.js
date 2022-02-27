@@ -1,5 +1,5 @@
 import './AddEmployee.scss';
-import react, { useContext, useReducer } from 'react';
+import react, { useContext, useReducer, useEffect, useState } from 'react';
 import { EmployeeContext } from 'context/employeeContext';
 import AddEmployeeFieldGroup from 'components/AddEmployeeFieldGroup/AddEmployeeFieldGroup';
 import { ACTIONS } from 'context/employeeContext';
@@ -7,121 +7,112 @@ import { ACTIONS } from 'context/employeeContext';
 const AddEmployee = (props) => {
   const context = useContext(EmployeeContext);
 
-  const setUpEmpObjDetails = (obj) => {
-    switch(obj.id) {
-      case 'id':  
+  const setUpEmpObjDetails = (key) => {
+    switch(key) {
+      case 'id':
         return {
-          ...obj,
-          value: context.empData.data[context.empData.data.length-1].id + 1
+          id: key,
+          value: '',
         };
 
       case 'firstName':  
         return {
-          ...obj,
+          id: key,
+          value: 'husain',
           label: 'First Name',
           type: 'text',
         }
 
       case 'lastName':  
         return {
-          ...obj,
+          id: key,
+          value: '',
           label: 'Last Name',
           type: 'text',
         }
 
       case 'email':  
         return {
-          ...obj,
+          id: key,
+          value: '',
           label: 'Email',
           type: 'email',
         }
 
       case 'contactNumber':  
         return {
-          ...obj,
+          id: key,
+          value: '',
           label: 'Contact Number',
           type: 'tel',
         }
 
       case 'dob':  
         return {
-          ...obj,
+          id: key,
+          value: '',
           label: 'D.O.B.',
-          type: 'data',
+          type: 'date',
         }
 
       default:
-        return obj;
+        return {};
     }
   };
-
-  const setUpAddEmpObj = (argArr) => {
-    argArr = context.empFields.data.map(field => {
-      let curObj = {
-        id: field,
-        value: ''
-      };
-      return setUpEmpObjDetails(curObj);
-    });
-    console.log('argArr:', argArr)
-    return argArr;
+  
+  const setUpAddEmpObj = (argObj) => {
+    context.empFields.data.forEach(field => argObj[field] = setUpEmpObjDetails(field));
+    return argObj;
   }
 
   const addEmpReducer = (state, action) => {
-    switch(action.type) {
-      case 'firstName': 
-        return {
-          ...state,
-          firstName: action.payload.fieldValue,
-        }
-
-      case 'lastName' : 
-        return {
-          ...state,
-          lastName: action.payload.fieldValue,
-        }
-
-      case 'email' : 
-        return {
-          ...state,
-          email: action.payload.fieldValue,
-        }
-
-      case 'contactNumber' : 
-        return {
-          ...state,
-          contactNumber: action.payload.fieldValue,
-        }
-
-      case 'dob' : 
-        return {
-          ...state,
-          dob: action.payload.fieldValue,
-        }
-
-      default: 
-        return state;
+    if(context.empFields.data.includes(action.type)) {
+      const stateCopy = JSON.parse(JSON.stringify(state));
+      stateCopy[action.type].value = action.payload.fieldValue;
+      return stateCopy;
     }
   };
 
-  const [addEmpData, addEmpDispatch] = useReducer(addEmpReducer, [] , setUpAddEmpObj); 
+  const [addEmpData, addEmpDispatch] = useReducer(addEmpReducer, {} , setUpAddEmpObj); 
 
   const addEmpHandler = (e) => {
+    const generateUniqueId = () => {
+      console.log('entry');
+      let uniqueId = Math.floor(Math.random() * (9999 - 1001) + 1001);
+      console.log('id:', uniqueId);
+      let existingIds = context.empData.data.map(cur => cur.id);
+
+      if(existingIds.includes(uniqueId)) {
+        console.log('duplicate');
+        generateUniqueId();
+      } else {
+        console.log('og return', uniqueId);
+        return uniqueId;
+      }
+    };
+
     e.preventDefault();
-    context.empData.setData({type: ACTIONS.add, payload: {data: addEmpData}});
+    let newEmp = {};
+    Object.values(addEmpData).forEach((cur) => {
+      newEmp[cur.id] = cur.value; 
+    });
+
+    newEmp.id = generateUniqueId();
+    // newEmp.id = Math.floor(Math.random() * (1005 - 1010) + 1010);
+    context.empData.setData({type: ACTIONS.add, payload: {data: newEmp}})
   };
 
   const addEmpDataHandler = (e) => {
     const {id, value} = e.target;
     addEmpDispatch({type: id, payload: {fieldValue: value}});
-  }
+  };
 
   return ( 
     <div className="add-emp">
       <form className="add-emp-form" onSubmit={addEmpHandler}>
         {
-          addEmpData.map(curEmpData => 
-            curEmpData.id !== 'id' && 
+          Object.values(addEmpData).map(curEmpData => 
+            (curEmpData.id === 'firstName') && 
             <AddEmployeeFieldGroup
               key={curEmpData.id} 
               id={curEmpData.id} 

@@ -17,14 +17,11 @@ export const EmployeeContextProvider = props => {
         return action.payload.data;
 
       case ACTIONS.add:
-        console.log('add: ', state);
         return {
           ...state, 
           'data': [
-            ...state.data, {
-              id: "ss",
-              firstName: 'husain'
-            }
+            ...state.data, 
+            action.payload.data
           ]
         };
         
@@ -48,7 +45,7 @@ export const EmployeeContextProvider = props => {
 
   useEffect(() => {
     axios
-      .get(`https://hub.dummyapis.com/employee?noofRecords=5&idStarts=1001`)
+      .get(`https://hub.dummyapis.com/employee?noofRecords=2&idStarts=1001`)
       .then(employeeData => {
         const EditedEmployeeFields = employeeData.data.map(currentEmployeeData => {
           const {address, imageUrl, salary, age, ...currentEditedEmployeeFields} = currentEmployeeData;
