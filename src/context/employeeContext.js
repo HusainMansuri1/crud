@@ -1,14 +1,9 @@
 import axios from 'axios';
 import React, {useReducer, useEffect, createContext, useState} from 'react';
+import { ACTIONS } from "helpers";
+import { act } from '@testing-library/react';
 
 export const EmployeeContext = createContext([]);
-
-export const ACTIONS = {
-  set: '=',
-  add: '+',
-  delete: '-',
-  edit: '~'
-}
 
 export const EmployeeContextProvider = props => {
   const empReducer = (state, action) => {
@@ -26,7 +21,13 @@ export const EmployeeContextProvider = props => {
         };
         
       case ACTIONS.edit:
-        return state;
+        let updatedEmpData = JSON.parse(JSON.stringify(state.data));
+        updatedEmpData[action.payload.index] = action.payload.data;
+
+        return {
+          ...state, 
+          'data': updatedEmpData
+        };        
 
       case ACTIONS.delete:
         return state;
@@ -73,7 +74,6 @@ export const EmployeeContextProvider = props => {
       }, 
       empFields: {
         data: empFields, 
-        setData: setEmpFields
       }
     }}>
       {loadInfo.loaded && props.children}

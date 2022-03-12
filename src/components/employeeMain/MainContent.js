@@ -1,8 +1,8 @@
 import EmployeeTable from "components/EmployeeTable/EmployeeTable";
 import AddEmployee from "components/AddEmployee/AddEmployee";
-import './MainContent.scss';
+import './employeeMain.scss';
 
-const Main = () => {
+const EmployeeMain = () => {
   return ( 
     <main className="app-main">
       <div className="container">
@@ -13,4 +13,4 @@ const Main = () => {
   );
 }
 
-export default Main;
+export default EmployeeMain;

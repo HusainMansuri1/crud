@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from 'components/Header/Header';
 import Footer from 'components/Footer/Footer';
-import MainContent from 'components/MainContent/MainContent';
+import EmployeeMain from 'components/employeeMain/employeeMain';
 // import Test from 'components/Test';
 import { EmployeeContextProvider } from 'context/employeeContext';
 
@@ -10,7 +10,7 @@ function App() {
     <EmployeeContextProvider>
       <div className="App">
         <Header />
-        <MainContent />
+        <EmployeeMain />
         <Footer />
       </div>
     </EmployeeContextProvider>
