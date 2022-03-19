@@ -13,6 +13,12 @@ const Employee = (props) => {
       >
         edit
       </button>
+      <button
+        className="cmn-btn"
+        onClick={props.delete}
+      >
+        delete
+      </button>
     </div>
   );
 }

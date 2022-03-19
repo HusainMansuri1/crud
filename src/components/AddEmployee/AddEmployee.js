@@ -13,7 +13,7 @@ const AddEmployee = (props) => {
    * Reducer function to update newEmpData state
    * @param {*object} state state value automatically provided by Reducer
    * @param {*object} action contains necessary properties action.type & action.payload to update the state 
-   * @returns {object} state: new updated state if action.type value is expected else returns same state value
+   * @returns {object} new updated state if action.type value is expected else returns same state value
    */
   const newEmpReducer = (state, action) => {
     if (context.empFields.data.includes(action.type)) {
@@ -27,14 +27,19 @@ const AddEmployee = (props) => {
   };
 
   const [newEmpData, newEmpDispatch] = useReducer(newEmpReducer, props.blankEmpData);
- 
+  
+  /**
+   * Function to add new employee to employee context
+   * @param {*} e added automatically by the event object
+   * @returns true
+   */
   const addEmpHandler = (e) => {
     e.preventDefault();
     let newEmp = JSON.parse(JSON.stringify(newEmpData));
-    /** Overwriting required employee fields */
+    /** Overwriting required fields */
     newEmp.id = generateUniqueId(context.empData.data.map(cur => cur.id));
-    newEmp.dob = changeDateFormat(newEmpData.dob);
-    /**  Adding new Employee*/
+    newEmp.dob = changeDateFormat(newEmpData.dob, 'api');
+    /**  Adding new Employee to context */
     context.empData.setData({ type: ACTIONS.add, payload: { data: newEmp } });
     /** Emptying employ state field values */
     Object.keys(newEmpData).forEach((key) => newEmpDispatch({ type: key, payload: { value: "" } }));

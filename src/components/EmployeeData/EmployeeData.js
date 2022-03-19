@@ -1,24 +1,40 @@
-import { useState, useReducer, useContext } from 'react';
+import { useReducer, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { EmployeeContext } from "context/employeeContext";
-import Employee from 'components/Employee/Employee';
-import AddEmployeeFieldGroup from "components/AddEmployeeFieldGroup/AddEmployeeFieldGroup";
 import { ACTIONS } from 'helpers';
+import { changeDateFormat } from 'helpers';
+import Employee from 'components/Employee/Employee';
+import Edit from 'components/Edit/Edit';
 import './EmployeeData.scss';
 
 const EmployeeData = (props) => {
   
   const context = useContext(EmployeeContext);
-
-  const [edit, setEdit] = useState({
-    active: false,
-    index: null
-  });
+  
+  const setEditReducer = (state, action) => {
+    switch (action.type) {
+      case ACTIONS.set:
+        editEmpDispatch({ type: ACTIONS.set, payload: { index: action.payload.index } });
+        return {
+          active: true,
+          index: action.payload.index
+        };
+      case ACTIONS.reset:
+        Object.keys(editEmpData).forEach((key) => editEmpDispatch({ type: key, payload: { value: "" } }));
+        return {
+          active: false,
+          index: null
+        };
+      default:
+        return state;
+    }
+  }
 
   const editEmpReducer = (state, action) => {
     if(action.type === ACTIONS.set) {
       let newState = JSON.parse(JSON.stringify(state));
       Object.keys(context.empData.data[action.payload.index]).forEach(key => newState[key] = context.empData.data[action.payload.index][key]);
+      newState.dob = changeDateFormat(newState.dob, 'html');
       return newState;
     } else if (context.empFields.data.includes(action.type)) {
       return ({
@@ -31,65 +47,52 @@ const EmployeeData = (props) => {
   };
 
   const [editEmpData, editEmpDispatch] = useReducer(editEmpReducer, props.blankEmpData);
-  console.log('props.blankEmpData:', props.blankEmpData)
 
-  const activateEditHandler = (index) => {
-    setEdit({
-      active: true,
-      index
+  const [edit, setEditDispatch] = useReducer(setEditReducer, {
+    active: false,
+    index: null
+  });
+
+  const editEmpHandler = () => {
+    let newState = JSON.parse(JSON.stringify(editEmpData));
+    newState.dob = changeDateFormat(newState.dob, 'api');
+    context.empData.setData({ 
+      type: ACTIONS.edit, 
+      payload: { data: newState, index: edit.index } 
     });
-    editEmpDispatch({ type: ACTIONS.set, payload: {index}})
-  };
 
-  const editEmpHandler = (e) => {
-    let updatedEmp = JSON.parse(JSON.parse(editEmpData));
-    context.empData.setData({ type: ACTIONS.edit, payload: { data: updatedEmp } });
+    setEditDispatch( { type: ACTIONS.reset, payload: {} } )
+
     return true;  
   };
 
-  const Edit = () => {
-    return(
-      <div className='edit-emp'>
-        <h2>Edit Employee</h2>
-        <form className='add-emp-form' onSubmit={() => context.empData.setData({ 
-          type: ACTIONS.edit, 
-          payload: { data: editEmpData, index: edit.index } 
-        })}>
-          { Object.values(props.fieldDetails).map((field) => 
-            field.id !== "id" && 
-              <AddEmployeeFieldGroup 
-                key={field.id} 
-                id={field.id} 
-                value={editEmpData[field.id]} 
-                label={field.label} 
-                type={field.type} 
-                change={(e) => editEmpDispatch({ 
-                  type: e.target.id, 
-                  payload: { value: e.target.value } 
-                })} 
-              />
-          )}
-          <button type='submit'>Edit Employee</button>
-        </form>
-      </div>
-    );
-  }
-
   return ( 
     <div className="emp__data">
-      {context.empData.data.map((curEmp, ind) =>  
+      {context.empData.data.map((curEmp, index) =>  
         <Employee 
           key={curEmp.id} 
-          index={ind}
+          index={index}
           emp={curEmp}
-          change={context.empData.setData}
-          edit={() => activateEditHandler(ind)}
+          edit={() => setEditDispatch( { type: ACTIONS.set, payload: { index } } )}
+          delete = {() => {
+            setEditDispatch( {type: ACTIONS.reset, payload: {} })
+            return context.empData.setData({ type: ACTIONS.delete, payload: { index } })
+          }}
         /> 
       )}
       { edit.active && createPortal(
-        <Edit />,
-        document.getElementById('edit-root')
-      ) }
+          <Edit 
+            fieldDetails={props.fieldDetails}
+            data={editEmpData}
+            submit={editEmpHandler}
+            reset={() => setEditDispatch({ type: ACTIONS.reset, payload: {} } )}
+            change={(e) => editEmpDispatch({ 
+              type: e.target.id, 
+              payload: { value: e.target.value } 
+            })} 
+          />,
+        document.getElementById('edit-root')) 
+      }
     </div>
   );
 }
