@@ -35,6 +35,7 @@ const AddEmployee = (props) => {
    */
   const addEmpHandler = (e) => {
     e.preventDefault();
+    /** storing copy in new variable to properly mutate state */
     let newEmp = JSON.parse(JSON.stringify(newEmpData));
     /** Overwriting required fields */
     newEmp.id = generateUniqueId(context.empData.data.map(cur => cur.id));

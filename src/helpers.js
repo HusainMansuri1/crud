@@ -1,3 +1,6 @@
+/** 
+ * Actions to be used by useReducer
+ */
 export const ACTIONS = {
   set: '=',
   add: '+',
@@ -6,6 +9,11 @@ export const ACTIONS = {
   edit: '~'
 }
 
+/**
+ * To generate unique 4 digit ID
+ * @param {*array} existiIds 
+ * @returns new unique id
+ */
 export const generateUniqueId = (existiIds) => {
   // console.log("entry");
   let newId = Math.floor(Math.random() * (9999 - 1001) + 1001);
@@ -13,9 +21,11 @@ export const generateUniqueId = (existiIds) => {
   let existingIds = existiIds;
 
   if (existingIds.includes(newId)) {
+    /** if newly generated ID exist in existingIds array then call self to generate a new ID */
     // console.log("duplicate");
     generateUniqueId();
   } else {
+    /** if newly generated ID does not exist in existingIds array then return it */
     // console.log("og return", newId);
     return newId;
   }

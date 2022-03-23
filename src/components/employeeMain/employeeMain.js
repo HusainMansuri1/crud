@@ -7,6 +7,10 @@ import './employeeMain.scss';
 const EmployeeMain = (props) => {
   const context = useContext(EmployeeContext);
 
+  /**
+   * To set employ fields which will be then used in input fields to get data from user
+   * @returns {object} employ fields (eg name, dob)   
+   */
   const empFieldDetails = (() => {
     let fields = {};
     context.empFields.data.forEach((field) => 
@@ -59,7 +63,12 @@ const EmployeeMain = (props) => {
       })());
     return fields;
   })();
-
+  
+  
+  /**
+   * To set starter employ data object with empty values
+   * @returns {object} employ fields (eg name, dob)   
+   */
   const initEmptyEmpData = (() => {
     let empObj = {};
     context.empFields.data.forEach(cur => empObj[cur] = '');

@@ -10,7 +10,12 @@ import './EmployeeData.scss';
 const EmployeeData = (props) => {
   
   const context = useContext(EmployeeContext);
-  
+  /**
+   * Reducer function to update edit state
+   * @param {*object} state state value automatically provided by Reducer
+   * @param {*object} action contains necessary properties action.type & action.payload to update the state 
+   * @returns {object} new updated state if action.type value is expected else returns same state value
+   */
   const setEditReducer = (state, action) => {
     switch (action.type) {
       case ACTIONS.set:
@@ -30,6 +35,12 @@ const EmployeeData = (props) => {
     }
   }
 
+  /**
+   * Reducer function to update editEmpData state
+   * @param {*object} state state value automatically provided by Reducer
+   * @param {*object} action contains necessary properties action.type & action.payload to update the state 
+   * @returns {object} new updated state if action.type value is expected else returns same state value
+   */
   const editEmpReducer = (state, action) => {
     if(action.type === ACTIONS.set) {
       let newState = JSON.parse(JSON.stringify(state));
@@ -53,6 +64,10 @@ const EmployeeData = (props) => {
     index: null
   });
 
+  /**
+   * To set edited employe to context 
+   * @returns true
+   */
   const editEmpHandler = () => {
     let newState = JSON.parse(JSON.stringify(editEmpData));
     newState.dob = changeDateFormat(newState.dob, 'api');
@@ -80,7 +95,9 @@ const EmployeeData = (props) => {
           }}
         /> 
       )}
-      { edit.active && createPortal(
+      { 
+      /** after clicking edit button */
+        edit.active && createPortal(
           <Edit 
             fieldDetails={props.fieldDetails}
             data={editEmpData}

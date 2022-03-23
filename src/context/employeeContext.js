@@ -5,6 +5,12 @@ import { ACTIONS } from "helpers";
 export const EmployeeContext = createContext([]);
 
 export const EmployeeContextProvider = props => {
+  /**
+   * Reducer function to update empData state
+   * @param {*object} state state value automatically provided by Reducer
+   * @param {*object} action contains necessary properties action.type & action.payload to update the state 
+   * @returns {object} new updated state if action.type value is expected else returns same state value
+   */
   const empReducer = (state, action) => {
     let stateCopy = JSON.parse(JSON.stringify(state));
     switch(action.type) {
@@ -41,16 +47,18 @@ export const EmployeeContextProvider = props => {
     axios
       .get(`https://hub.dummyapis.com/employee?noofRecords=1&idStarts=1001`)
       .then(employeeData => {
+        /** extracting required data from  api result */
         const EditedEmployeeData = employeeData.data.map(currentEmployeeData => {
           const { address, imageUrl, salary, age, ...currentEditedEmployeeData } = currentEmployeeData;
           return currentEditedEmployeeData;
         });
-
+        /** updating state on success */
         empDispatch({ type: ACTIONS.set, payload: { data: EditedEmployeeData } });
         setEmpFields(Object.keys(EditedEmployeeData[0]));
         setLoadInfo({ loaded: true, success: true });
       })
       .catch(error => {
+        /** updating state on error */
         console.log('employeeData error:', error);
         empDispatch({type: ACTIONS.set, payload: {data: []}});
         setLoadInfo({loaded: true, success: false});
