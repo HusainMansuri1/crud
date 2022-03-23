@@ -1,5 +1,5 @@
-import AddEmployeeFieldGroup from "components/AddEmployeeFieldGroup/AddEmployeeFieldGroup";
-import './Edit.scss';
+import EmployeeFieldGroup from "components/EmployeeFieldGroup/EmployeeFieldGroup";
+import './EditEmployee.scss';
 
 const Edit = (props) => {
   return(
@@ -8,7 +8,7 @@ const Edit = (props) => {
       <form className='edit-emp-form' onSubmit={props.submit}>
         { Object.values(props.fieldDetails).map((field) => 
           field.id !== "id" && 
-            <AddEmployeeFieldGroup 
+            <EmployeeFieldGroup
               key={field.id} 
               id={field.id} 
               value={props.data[field.id]} 

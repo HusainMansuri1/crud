@@ -1,4 +1,4 @@
-const AddEmployeeFieldGroup = (props) => {
+const EmployeeFieldGroup = (props) => {
   return ( 
     <div className={`add-emp__${props.id} add-emp__grp`}>
       <label 
@@ -18,4 +18,4 @@ const AddEmployeeFieldGroup = (props) => {
   );
 }
  
-export default AddEmployeeFieldGroup;
+export default EmployeeFieldGroup;

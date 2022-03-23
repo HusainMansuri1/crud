@@ -4,7 +4,7 @@ import { EmployeeContext } from "context/employeeContext";
 import { ACTIONS } from 'helpers';
 import { changeDateFormat } from 'helpers';
 import Employee from 'components/Employee/Employee';
-import Edit from 'components/Edit/Edit';
+import EditEmployee from 'components/EditEmployee/EditEmployee';
 import './EmployeeData.scss';
 
 const EmployeeData = (props) => {
@@ -98,7 +98,7 @@ const EmployeeData = (props) => {
       { 
       /** after clicking edit button */
         edit.active && createPortal(
-          <Edit 
+          <EditEmployee 
             fieldDetails={props.fieldDetails}
             data={editEmpData}
             submit={editEmpHandler}

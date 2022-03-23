@@ -1,6 +1,6 @@
 import { useContext, useReducer} from "react";
 import { EmployeeContext } from "context/employeeContext";
-import AddEmployeeFieldGroup from "components/AddEmployeeFieldGroup/AddEmployeeFieldGroup";
+import EmployeeFieldGroup from "components/EmployeeFieldGroup/EmployeeFieldGroup";
 import { ACTIONS } from "helpers";
 import { generateUniqueId } from "helpers";
 import { changeDateFormat } from "helpers";
@@ -53,7 +53,7 @@ const AddEmployee = (props) => {
       <form className='add-emp-form' onSubmit={addEmpHandler}>
         { Object.values(props.fieldDetails).map((field) => 
           field.id !== "id" && 
-            <AddEmployeeFieldGroup 
+            <EmployeeFieldGroup
               key={field.id} 
               id={field.id} 
               value={newEmpData[field.id]} 
