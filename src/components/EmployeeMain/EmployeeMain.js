@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { EmployeeContext } from "context/employeeContext";
 import EmployeeTable from "components/EmployeeTable/EmployeeTable";
 import AddEmployee from "components/AddEmployee/AddEmployee";
-import './employeeMain.scss';
+import './EmployeeMain.scss';
 
 const EmployeeMain = (props) => {
   const context = useContext(EmployeeContext);

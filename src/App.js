@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from 'components/Header/Header';
 import Footer from 'components/Footer/Footer';
-import EmployeeMain from 'components/employeeMain/employeeMain';
+import EmployeeMain from 'components/EmployeeMain/EmployeeMain';
 // import Test from 'components/Test';
 import { EmployeeContextProvider } from 'context/employeeContext';
 
