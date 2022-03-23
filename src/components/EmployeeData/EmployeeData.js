@@ -19,12 +19,14 @@ const EmployeeData = (props) => {
   const setEditReducer = (state, action) => {
     switch (action.type) {
       case ACTIONS.set:
+        /** setting editEmpData field values */
         editEmpDispatch({ type: ACTIONS.set, payload: { index: action.payload.index } });
         return {
           active: true,
           index: action.payload.index
         };
       case ACTIONS.reset:
+        /** resetting editEmpData field values */
         Object.keys(editEmpData).forEach((key) => editEmpDispatch({ type: key, payload: { value: "" } }));
         return {
           active: false,
@@ -43,11 +45,17 @@ const EmployeeData = (props) => {
    */
   const editEmpReducer = (state, action) => {
     if(action.type === ACTIONS.set) {
+      /** when edit button is clicked */
+      /** storing copy in new variable to properly mutate state */ 
       let newState = JSON.parse(JSON.stringify(state));
+      /** extracting values from context at provided index */
       Object.keys(context.empData.data[action.payload.index]).forEach(key => newState[key] = context.empData.data[action.payload.index][key]);
+      /** overriting required fields */
       newState.dob = changeDateFormat(newState.dob, 'html');
       return newState;
     } else if (context.empFields.data.includes(action.type)) {
+      /** on edit input change */
+      /** overrite property it expected */
       return ({
         ...state,
         [action.type]: action.payload.value
@@ -65,17 +73,20 @@ const EmployeeData = (props) => {
   });
 
   /**
-   * To set edited employe to context 
+   * To set edited employee to context 
    * @returns true
    */
   const editEmpHandler = () => {
+    /** storing copy in new variable to properly mutate state */
     let newState = JSON.parse(JSON.stringify(editEmpData));
+    /** Overwriting required fields */
     newState.dob = changeDateFormat(newState.dob, 'api');
+    /**  Adding edited Employee to context */
     context.empData.setData({ 
       type: ACTIONS.edit, 
       payload: { data: newState, index: edit.index } 
     });
-
+    /** resetting edit state */
     setEditDispatch( { type: ACTIONS.reset, payload: {} } )
 
     return true;  
