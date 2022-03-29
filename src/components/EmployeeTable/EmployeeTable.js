@@ -5,7 +5,9 @@ import './EmployeeTable.scss';
 const EmployeeTable  = (props) => {
   return ( 
     <div className="empt-tbl">
-      <EmployeeFields />
+      <EmployeeFields 
+        fieldDetails={props.fieldDetails}
+      />
       <EmployeeData 
         fieldDetails={props.fieldDetails}
         blankEmpData={props.blankEmpData}

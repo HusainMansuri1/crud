@@ -64,7 +64,6 @@ const EmployeeMain = (props) => {
     return fields;
   })();
   
-  
   /**
    * To set starter employ data object with empty values
    * @returns {object} employ fields (eg name, dob)   
