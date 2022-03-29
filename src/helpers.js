@@ -11,19 +11,18 @@ export const ACTIONS = {
 
 /**
  * To generate unique 4 digit ID
- * @param {*array} existiIds 
+ * @param {*array} existingIds 
  * @returns new unique id
  */
-export const generateUniqueId = (existiIds) => {
+export const generateUniqueId = (existingIds) => {
   // console.log("entry");
   let newId = Math.floor(Math.random() * (9999 - 1001) + 1001);
   // console.log("id:", newId);
-  let existingIds = existiIds;
 
   if (existingIds.includes(newId)) {
     /** if newly generated ID exist in existingIds array then call self to generate a new ID */
     // console.log("duplicate");
-    generateUniqueId();
+    generateUniqueId(existingIds);
   } else {
     /** if newly generated ID does not exist in existingIds array then return it */
     // console.log("og return", newId);
@@ -54,8 +53,8 @@ export const changeDateFormat = (rawDate, changeToFormat) => {
     case 'html':
       /** recieved Date format is dd/mm/yyyy & desired format is yyyy-mm-dd */
       let dateArr = rawDate.split("/");
-      let dateStr = new Date(dateArr[2] + '/' + dateArr[1] + '/' + dateArr[0]);
-      let newDate = new Date(dateStr); 
+      // let dateStr = new Date(dateArr[2] + '/' + dateArr[1] + '/' + dateArr[0]);
+      let newDate = new Date(dateArr[2] + '/' + dateArr[1] + '/' + dateArr[0]); 
       return `${addZero(newDate.getFullYear())}-${addZero(newDate.getMonth() + 1)}-${addZero(newDate.getDate())}`;
       
     default:
