@@ -52,7 +52,7 @@ const AddEmployee = (props) => {
       <h2>Add Employee</h2>
       <form className='add-emp-form' onSubmit={addEmpHandler}>
         { Object.values(props.fieldDetails).map((field) => 
-          field.id !== "id" && 
+          field.editable && 
             <EmployeeFieldGroup
               key={field.id} 
               id={field.id} 

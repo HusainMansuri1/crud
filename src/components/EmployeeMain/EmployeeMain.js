@@ -12,6 +12,7 @@ const EmployeeMain = (props) => {
    * @returns {object} employ fields (eg name, dob)   
    */
   const empFieldDetails = (() => {
+    console.log('run');
     let fields = {};
     context.empFields.data.forEach((field) => 
       fields[field] = ((key = field) => {
@@ -20,6 +21,7 @@ const EmployeeMain = (props) => {
             return {
               id: key,
               label: "id",
+              editable: false
             };
             
           case "firstName":
@@ -27,6 +29,7 @@ const EmployeeMain = (props) => {
               id: key,
               label: "First Name",
               type: "text",
+              editable: true
             };
 
           case "lastName":
@@ -34,6 +37,7 @@ const EmployeeMain = (props) => {
               id: key,
               label: "Last Name",
               type: "text",
+              editable: true
             };
 
           case "email":
@@ -41,6 +45,7 @@ const EmployeeMain = (props) => {
               id: key,
               label: "Email",
               type: "email",
+              editable: true
             };
 
           case "contactNumber":
@@ -48,6 +53,7 @@ const EmployeeMain = (props) => {
               id: key,
               label: "Contact Number",
               type: "tel",
+              editable: true
             };
 
           case "dob":
@@ -55,6 +61,7 @@ const EmployeeMain = (props) => {
               id: key,
               label: "D.O.B.",
               type: "date",
+              editable: true
             };
 
           default:

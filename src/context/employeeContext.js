@@ -24,11 +24,13 @@ export const EmployeeContextProvider = props => {
         ];
         
       case ACTIONS.edit:
-        stateCopy[action.payload.index] = action.payload.data;
+        stateCopy.forEach((elem, index) => {
+          if (elem.id === action.payload.id) stateCopy[index] = action.payload.data;
+        });
         return stateCopy;        
 
       case ACTIONS.delete:
-        stateCopy = stateCopy.filter((element, index) => action.payload.index !== index);
+        stateCopy = stateCopy.filter((element) => action.payload.id !== element.id);
         return stateCopy;  
 
       default:
@@ -45,7 +47,7 @@ export const EmployeeContextProvider = props => {
 
   useEffect(() => {
     axios
-      .get(`https://hub.dummyapis.com/employee?noofRecords=1&idStarts=1001`)
+      .get(`https://hub.dummyapis.com/employee?noofRecords=3&idStarts=1001`)
       .then(employeeData => {
         /** extracting required data from  api result */
         const EditedEmployeeData = employeeData.data.map(currentEmployeeData => {

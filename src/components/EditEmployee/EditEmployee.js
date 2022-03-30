@@ -7,7 +7,7 @@ const Edit = (props) => {
       <h2>Edit Employee</h2>
       <form className='edit-emp-form' onSubmit={props.submit}>
         { Object.values(props.fieldDetails).map((field) => 
-          field.id !== "id" && 
+          field.editable && 
             <EmployeeFieldGroup
               key={field.id} 
               id={field.id} 

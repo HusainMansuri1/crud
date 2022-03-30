@@ -20,17 +20,25 @@ const EmployeeData = (props) => {
     switch (action.type) {
       case ACTIONS.set:
         /** setting editEmpData field values */
-        editEmpDispatch({ type: ACTIONS.set, payload: { index: action.payload.index } });
+        editEmpDispatch({ 
+          type: ACTIONS.set, 
+          payload: { 
+            index: action.payload.index,
+            id: action.payload.id
+          } 
+        });
         return {
           active: true,
-          index: action.payload.index
+          index: action.payload.index,
+          id: action.payload.id,
         };
       case ACTIONS.reset:
         /** resetting editEmpData field values */
         Object.keys(editEmpData).forEach((key) => editEmpDispatch({ type: key, payload: { value: "" } }));
         return {
           active: false,
-          index: null
+          index: null,
+          id: null,
         };
       default:
         return state;
@@ -69,7 +77,8 @@ const EmployeeData = (props) => {
 
   const [edit, setEditDispatch] = useReducer(setEditReducer, {
     active: false,
-    index: null
+    index: null,
+    id: null,
   });
 
   /**
@@ -84,7 +93,7 @@ const EmployeeData = (props) => {
     /**  Adding edited Employee to context */
     context.empData.setData({ 
       type: ACTIONS.edit, 
-      payload: { data: newState, index: edit.index } 
+      payload: { data: newState, id: edit.id } 
     });
     /** resetting edit state */
     setEditDispatch( { type: ACTIONS.reset, payload: {} } )
@@ -99,10 +108,10 @@ const EmployeeData = (props) => {
           key={curEmp.id} 
           index={index}
           emp={curEmp}
-          edit={() => setEditDispatch( { type: ACTIONS.set, payload: { index } } )}
+          edit={() => setEditDispatch( { type: ACTIONS.set, payload: { index, id: curEmp.id } } )}
           delete = {() => {
             setEditDispatch( {type: ACTIONS.reset, payload: {} })
-            return context.empData.setData({ type: ACTIONS.delete, payload: { index } })
+            context.empData.setData({ type: ACTIONS.delete, payload: { id: curEmp.id } })
           }}
         /> 
       )}
