@@ -1,3 +1,5 @@
+export const apiEndPoint = 'https://hub.dummyapis.com/employee?noofRecords=5&idStarts=1001';
+
 /** 
  * Actions to be used by useReducer
  */
@@ -7,7 +9,7 @@ export const ACTIONS = {
   delete: '-',
   reset: '!',
   edit: '~'
-}
+};
 
 /**
  * To generate unique 4 digit ID
@@ -53,7 +55,6 @@ export const changeDateFormat = (rawDate, changeToFormat) => {
     case 'html':
       /** recieved Date format is dd/mm/yyyy & desired format is yyyy-mm-dd */
       let dateArr = rawDate.split("/");
-      // let dateStr = new Date(dateArr[2] + '/' + dateArr[1] + '/' + dateArr[0]);
       let newDate = new Date(dateArr[2] + '/' + dateArr[1] + '/' + dateArr[0]); 
       return `${addZero(newDate.getFullYear())}-${addZero(newDate.getMonth() + 1)}-${addZero(newDate.getDate())}`;
       
