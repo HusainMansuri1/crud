@@ -19,7 +19,7 @@ const EditEmployeeModal = ({
 
   useEffect(() => {
     setEditEmpData(editEmp);
-    setEditEmpDataBackup(JSON.parse(JSON.stringify(editEmp)));
+    setEditEmpDataBackup(editEmp);
   }, [editEmp]);
   
   /**
@@ -31,16 +31,8 @@ const EditEmployeeModal = ({
    * To Edit employee to empData(App.js) State and related operations
    */
   const editEmpOperation = () => {
-    if(dateEdited) {
-      /** if date is edited then change date format before updating state */
-      let editEmpCopy = JSON.parse(JSON.stringify(editEmpData));
-      editEmpCopy.dob = changeDateFormat(editEmpCopy.dob, 'api');
-      /** saving edited employee to [App.js] State */
-      onOk({ type: ACTIONS.edit, payload: { id, data: editEmpCopy } })
-    } else {
-      /** saving edited employee to [App.js] State */
-      onOk({ type: ACTIONS.edit, payload: { id, data: editEmpData }})
-    }
+    /** saving edited employee to [App.js] State */
+    onOk({ type: ACTIONS.edit, payload: { id, data: editEmpData }})
     /**  disabling Edit toggle [App.js] State */
     onCancel({
       active: false,
@@ -52,30 +44,8 @@ const EditEmployeeModal = ({
    * To handle field value change
    */
   useEffect(() => {
-    // console.log('editEmpData:', editEmpData)
-    // const formatDate = () => {
-    //   return {
-    //     ...editEmpData,
-    //     // 'dob': changeDateFormat(editEmpData.dob, 'html')
-    //   };
-    // };
     form.setFieldsValue(editEmpData);  
   }, [form, editEmpData]);
-
-  /**
-   * To get current field value from editEmpData state 
-   * @param {*string} field field name:dataIndex
-   * @returns {string} formatted if current field is dob
-   */
-  const getFieldValue = (field) => {
-    if(editEmpData){
-      if(field.dataIndex === 'dob') {
-        return changeDateFormat(editEmpData[field.dataIndex], 'html')
-      } else {
-        return editEmpData[field.dataIndex]
-      }
-    }
-  };
 
   const closeModal = () => {
     /** closing modal state[App.js] */
@@ -106,7 +76,6 @@ const EditEmployeeModal = ({
         form={form}
         layout="vertical"
         onFinish={editEmpOperation}
-        initialValues={editEmpData}
       >
         {
           empFieldsDetail.map(field => {
@@ -129,7 +98,6 @@ const EditEmployeeModal = ({
                   type={field.inputType}
                   placeholder={`Please Enter ${field.title}`}
                   onChange={(e) => {
-                    e.target.id === 'dob' && setDateEdited(true)
                     setEditEmpData(pre => {
                       return {
                         ...pre,

@@ -31,24 +31,15 @@ const DeleteEmployeeModal = ({
         id: null
       })}
       footer={[
-        <>
-          <Button 
-            key="cancel" 
-            type="secondary"
-            onClick={() => onCancel({
-              active: false,
-              id: null
-            })}>
-            Close
-          </Button>
-          <Button 
-            danger 
-            key="delete"
-            type="primary"
-            onClick={deleteEmpOperation}>
-            Delete
-          </Button>
-        </>
+        <Button 
+          key="cancel" 
+          type="secondary"
+          onClick={() => onCancel({
+            active: false,
+            id: null
+          })}>
+          Close
+        </Button>
       ]}
     >
       <Form
@@ -73,6 +64,15 @@ const DeleteEmployeeModal = ({
             );
           })
         }
+        <Form.Item>
+          <Button 
+            danger 
+            key="delete"
+            type="primary"
+            onClick={deleteEmpOperation}>
+            Delete
+          </Button>
+        </Form.Item>
       </Form>
     </Modal>
   );

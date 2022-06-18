@@ -8,7 +8,7 @@ import EditEmployeeModal from 'components/EditEmployeeModal';
 import DeleteEmployeeModal from 'components/DeleteEmployeeModal';
 import ViewEmployeeModal from 'components/ViewEmployeeModal';
 import AddEmployeeModal from 'components/AddEmployeeModal';
-import { ACTIONS, apiEndPoint } from "helpers";
+import { ACTIONS, apiEndPoint, changeDateFormat } from "helpers";
 import 'antd/dist/antd.css';
 import './index.scss';
 
@@ -21,6 +21,7 @@ const App = () => {
         const EditedEmployeeData = employeeData.data.map(currentEmployeeData => {
           const { address, imageUrl, salary, age, ...currentEditedEmployeeData } = currentEmployeeData;
           currentEditedEmployeeData.key = currentEditedEmployeeData.id;
+          currentEditedEmployeeData.dob = changeDateFormat(currentEmployeeData.dob, 'html');
           return currentEditedEmployeeData;
         })
         return EditedEmployeeData;
