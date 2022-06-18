@@ -86,7 +86,7 @@ const EditEmployeeModal = ({
                 name={field.dataIndex}
                 rules={[
                   { 
-                    required: true, 
+                    required: field.editable, 
                     message: `Please enter your ${field.title}` 
                   },
                 ]}
