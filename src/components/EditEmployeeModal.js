@@ -3,7 +3,7 @@ import { Modal, Input, Form, Button } from 'antd';
 import { ACTIONS, changeDateFormat } from "helpers";
 
 const EditEmployeeModal = ({ 
-  visible, onOk, onCancel, empFieldsDetail, id, editEmp 
+  loadSuccess, visible, onOk, onCancel, empFieldsDetail, id, editEmp 
 }) => {
   const [form] = Form.useForm();
   
@@ -58,6 +58,7 @@ const EditEmployeeModal = ({
   };
 
   return ( 
+    loadSuccess && 
     <Modal
       forceRender 
       visible={visible}

@@ -3,7 +3,7 @@ import { Modal, Input, Form, Button } from 'antd';
 import { ACTIONS, changeDateFormat } from "helpers";
 
 const DeleteEmployeeModal = ({ 
-  visible, onOk, onCancel, empFieldsDetail, deleteEmp, id
+  loadSuccess, visible, onOk, onCancel, empFieldsDetail, deleteEmp, id
 }) => {
   const [form] = Form.useForm();
   
@@ -22,10 +22,11 @@ const DeleteEmployeeModal = ({
   };
 
   return ( 
+    loadSuccess &&
     <Modal
       forceRender 
       visible={visible}
-      title="Delete selected record ?"
+      title="Delete selected record"
       onCancel={() => onCancel({
         active: false,
         id: null

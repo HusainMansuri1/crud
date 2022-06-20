@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Modal, Button } from 'antd';
-import { EditOutlined, DeleteOutlined, EyeOutlined} from '@ant-design/icons';
+import { Table, Button, notification } from 'antd';
+import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import EditEmployeeModal from 'components/EditEmployeeModal';
@@ -17,26 +17,31 @@ const App = () => {
     axios
       .get(apiEndPoint)
       .then(employeeData => {
+        setLoadInfo(prev => ({ ...prev, loading: true }));
         /** extracting required data from  api result */
         const EditedEmployeeData = employeeData.data.map(currentEmployeeData => {
           const { address, imageUrl, salary, age, ...currentEditedEmployeeData } = currentEmployeeData;
           currentEditedEmployeeData.key = currentEditedEmployeeData.id;
           currentEditedEmployeeData.dob = changeDateFormat(currentEmployeeData.dob, 'html');
           return currentEditedEmployeeData;
-        })
+        });
         return EditedEmployeeData;
       })
       .then(EditedData => {
         /** updating state on success */
         empDispatch({ type: ACTIONS.set, payload: { data: EditedData }});
         setEmpFieldsDetail(generateEmpFieldsDetail(Object.keys(EditedData[0])));
-        setLoadInfo({ loaded: true, success: true });
+        setLoadInfo({ loading: false, success: true });
       })
       .catch(error => {
         console.log('employeeData error:', error);
+        notification.error({
+          duration: 10,
+          message: "Oops, Something went wrong! " + error,
+        });
         /** updating state on error */
         empDispatch({ type: ACTIONS.set, payload: { data: [] } });
-        setLoadInfo({ loaded: true, success: false });
+        setLoadInfo({ loading: false, success: false });
       });
   }, []);
 
@@ -77,7 +82,7 @@ const App = () => {
    * To store API call status
    */
   const [loadInfo, setLoadInfo] = useState({
-    loaded: null,
+    loading: true,
     success: null
   });
 
@@ -293,97 +298,100 @@ const App = () => {
   return (
     <div className="App">
       <Header empCount={empData.length} />
-      <div className="app-main">
-        <div className="container">
-          {
-            (loadInfo.success)
-            ?
-            <>
-              <Button 
-                type="primary"
-                style={{ marginBottom: 20 }}  
-                onClick={() => setAddEmpToggle(true)}
-              >
-                Add New
-              </Button>
-              <Table
-                rowClassName={(record) => rowBgColor(record.id)}
-                columns={[
-                  ...empFieldsDetail, {
-                    title: 'Actions',
-                    key: 'actions',
-                    render: (emp) => {
-                      return(
-                        <>
-                          <Button
-                            className="action-btn action-btn__view" 
-                            shape="circle" 
-                            size="middle" 
-                            icon={<EyeOutlined style={{ color: '#0031ff' }} />}
-                            style={{ margin: '0 5px' }}  
-                            onClick={() => activateView(emp)}
-                          />
+        <div className="app-main">
+          <div className="container">
+            {
+              (empData)
+              &&
+              <>
+                <Button 
+                  type="primary"
+                  style={{ marginBottom: 20 }}  
+                  onClick={() => setAddEmpToggle(true)}
+                >
+                  Add New
+                </Button>
+                <Table
+                  loading={loadInfo.loading}
+                  rowClassName={record => rowBgColor(record.id)}
+                  columns={empFieldsDetail && [
+                    ...empFieldsDetail, {
+                      title: 'Actions',
+                      key: 'actions',
+                      render: (emp) => {
+                        return(
+                          <>
+                            <Button
+                              className="action-btn action-btn__view" 
+                              shape="circle" 
+                              size="middle" 
+                              icon={<EyeOutlined style={{ color: '#0031ff' }} />}
+                              style={{ margin: '0 5px' }}  
+                              onClick={() => activateView(emp)}
+                            />
 
-                          <Button
-                            className="action-btn action-btn__edit" 
-                            shape="circle" 
-                            size="middle" 
-                            icon={ <EditOutlined style={{ color: '#009688' }} />}
-                            style={{ margin: '0 5px' }}  
-                            onClick={() => activateEdit(emp)}
-                          />
+                            <Button
+                              className="action-btn action-btn__edit" 
+                              shape="circle" 
+                              size="middle" 
+                              icon={ <EditOutlined style={{ color: '#009688' }} />}
+                              style={{ margin: '0 5px' }}  
+                              onClick={() => activateEdit(emp)}
+                            />
 
-                          <Button
-                            className="action-btn action-btn__delete" 
-                            shape="circle" 
-                            size="middle" 
-                            icon={ <DeleteOutlined style={{ color: '#ff0000' }} />}
-                            style={{ margin: '0 5px' }}  
-                            onClick={() => activateDelete(emp)}
-                          />
-                        </>
-                      )
+                            <Button
+                              className="action-btn action-btn__delete" 
+                              shape="circle" 
+                              size="middle" 
+                              icon={ <DeleteOutlined style={{ color: '#ff0000' }} />}
+                              style={{ margin: '0 5px' }}  
+                              onClick={() => activateDelete(emp)}
+                            />
+                          </>
+                        )
+                      }
                     }
-                  }
-                ]}
-                dataSource={empData}
-              />
-              <AddEmployeeModal 
-                visible={addEmpToggle}
-                empFieldsDetail={empFieldsDetail}
-                usedIDList={getUsedIDList()} 
-                onCancel={setAddEmpToggle}
-                onOk={empDispatch}
-              />
-              <ViewEmployeeModal 
-                visible={viewEmpToggle.active}
-                id={viewEmpToggle.id}
-                empFieldsDetail={empFieldsDetail}
-                onCancel={setViewEmpToggle}
-                viewEmp={getEmp('view')}
-              />
-              <EditEmployeeModal 
-                visible={editEmpToggle.active}
-                id={editEmpToggle.id}
-                empFieldsDetail={empFieldsDetail}
-                onOk={empDispatch}
-                onCancel={setEditEmpToggle}
-                editEmp={getEmp('edit')}
-              />
-              <DeleteEmployeeModal 
-                visible={deleteEmpToggle.active}
-                id={deleteEmpToggle.id}
-                empFieldsDetail={empFieldsDetail}
-                onOk={empDispatch}
-                onCancel={setDeleteEmpToggle}
-                deleteEmp={getEmp('delete')}
-              />
-            </>
-            :
-            'Loading...'
-          }
+                  ]}
+                  dataSource={empData}
+                />
+                <AddEmployeeModal 
+                  loadSuccess={loadInfo.success}
+                  visible={addEmpToggle}
+                  empFieldsDetail={empFieldsDetail}
+                  usedIDList={getUsedIDList()} 
+                  onCancel={setAddEmpToggle}
+                  onOk={empDispatch}
+                />
+                <ViewEmployeeModal 
+                  loadSuccess={loadInfo.success}
+                  visible={viewEmpToggle.active}
+                  id={viewEmpToggle.id}
+                  empFieldsDetail={empFieldsDetail && empFieldsDetail}
+                  onCancel={setViewEmpToggle}
+                  viewEmp={getEmp('view')}
+                />
+                <EditEmployeeModal 
+                  loadSuccess={loadInfo.success}
+                  visible={editEmpToggle.active}
+                  id={editEmpToggle.id}
+                  empFieldsDetail={empFieldsDetail && empFieldsDetail}
+                  onOk={empDispatch}
+                  onCancel={setEditEmpToggle}
+                  editEmp={getEmp('edit')}
+                />
+                <DeleteEmployeeModal 
+                  loadSuccess={loadInfo.success}
+                  visible={deleteEmpToggle.active}
+                  id={deleteEmpToggle.id}
+                  empFieldsDetail={empFieldsDetail && empFieldsDetail}
+                  onOk={empDispatch}
+                  onCancel={setDeleteEmpToggle}
+                  deleteEmp={getEmp('delete')}
+                />
+              </>
+            }
+          </div>
         </div>
-      </div>
       <Footer />
     </div>
   );

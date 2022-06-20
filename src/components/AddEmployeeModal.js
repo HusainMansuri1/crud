@@ -3,8 +3,9 @@ import { Modal, Form, Input, Button } from 'antd';
 import { ACTIONS, generateUniqueId } from "helpers";
 
 const AddEmployeeModal = ({ 
-  visible, onOk, onCancel, empFieldsDetail, usedIDList 
+  visible, onOk, onCancel, empFieldsDetail, usedIDList, loadSuccess 
 }) => {
+  
   const [form] = Form.useForm();
 
   /**
@@ -13,7 +14,7 @@ const AddEmployeeModal = ({
    */
   const getEmptyEmpData = () => {
     let emptyEmpData = {};
-    empFieldsDetail.map(field => {
+    empFieldsDetail && empFieldsDetail.map(field => {
       if(field.editable) {
         return emptyEmpData[field.dataIndex] = '';
       }
@@ -56,6 +57,7 @@ const AddEmployeeModal = ({
   };
   
   return ( 
+    loadSuccess && 
     <Modal
       forceRender 
       visible={visible}
