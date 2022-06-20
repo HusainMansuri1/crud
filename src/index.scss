@@ -32,7 +32,9 @@ body,
   background-color: #3c3c3c;
   padding: 10px 0;
 }
+/*********** App (end)  **************/
 
+/*********** Antd (start)  **************/
 /** Table */
 .delete-active-row {
   background: #ffd7d7;
@@ -50,4 +52,15 @@ body,
 .input-block:not(:last-of-type){
   margin-bottom: 10px;
 }
-/*********** App (end)  **************/
+
+/** Button */
+.action-btn.action-btn__view:hover{
+  border-color: #0031ff;
+}
+.action-btn.action-btn__edit:hover{
+  border-color: #009688;
+}
+.action-btn.action-btn__delete:hover{
+  border-color: #ff0000;
+}
+/*********** Antd (end)  **************/

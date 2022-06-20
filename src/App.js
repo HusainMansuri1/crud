@@ -310,38 +310,42 @@ const App = () => {
                 rowClassName={(record) => rowBgColor(record.id)}
                 columns={[
                   ...empFieldsDetail, {
-                  title: 'Actions',
-                  key: 'actions',
-                  render: (emp) => {
-                    return(
-                      <>
-                        <EyeOutlined 
-                          style={{
-                            color: '#009688',
-                            cursor: 'pointer',
-                            marginRight: '15px',
-                          }}
-                          onClick={() => activateView(emp)}
-                        />
-                        <EditOutlined 
-                          style={{
-                            color: '#0031ff',
-                            cursor: 'pointer',
-                            marginRight: '15px',
-                          }}
-                          onClick={() => activateEdit(emp)}
-                        />
-                        <DeleteOutlined 
-                          style={{
-                            color: '#ff0000',
-                            cursor: 'pointer',
-                          }}
-                          onClick={() => activateDelete(emp)} 
-                        />
-                      </>
-                    )
+                    title: 'Actions',
+                    key: 'actions',
+                    render: (emp) => {
+                      return(
+                        <>
+                          <Button
+                            className="action-btn action-btn__view" 
+                            shape="circle" 
+                            size="middle" 
+                            icon={<EyeOutlined style={{ color: '#0031ff' }} />}
+                            style={{ margin: '0 5px' }}  
+                            onClick={() => activateView(emp)}
+                          />
+
+                          <Button
+                            className="action-btn action-btn__edit" 
+                            shape="circle" 
+                            size="middle" 
+                            icon={ <EditOutlined style={{ color: '#009688' }} />}
+                            style={{ margin: '0 5px' }}  
+                            onClick={() => activateEdit(emp)}
+                          />
+
+                          <Button
+                            className="action-btn action-btn__delete" 
+                            shape="circle" 
+                            size="middle" 
+                            icon={ <DeleteOutlined style={{ color: '#ff0000' }} />}
+                            style={{ margin: '0 5px' }}  
+                            onClick={() => activateDelete(emp)}
+                          />
+                        </>
+                      )
+                    }
                   }
-                }]}
+                ]}
                 dataSource={empData}
               />
               <AddEmployeeModal 
