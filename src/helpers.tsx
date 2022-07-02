@@ -7,7 +7,6 @@ export const ACTIONS = {
   set: '=',
   add: '+',
   delete: '-',
-  reset: '!',
   edit: '~'
 };
 

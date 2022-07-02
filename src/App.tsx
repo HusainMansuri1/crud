@@ -13,13 +13,30 @@ import 'antd/dist/antd.css';
 import './index.scss';
 
 const App = () => {
+  interface ReducerState {
+    id: number | string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    contactNumber: string;
+    dob: number | string;
+  };
+
+  interface ReducerActions {
+    type: string;
+    payload: {
+      data: ReducerState[];
+      id?: number | string;
+    }
+  };
+  
   useEffect(() => {
     axios
       .get(apiEndPoint)
-      .then(employeeData => {
+      .then((employeeData) => {
         setLoadInfo(prev => ({ ...prev, loading: true }));
         /** extracting required data from  api result */
-        const EditedEmployeeData = employeeData.data.map(currentEmployeeData => {
+        const EditedEmployeeData = employeeData.data.map((currentEmployeeData: any) => {
           const { address, imageUrl, salary, age, ...currentEditedEmployeeData } = currentEmployeeData;
           currentEditedEmployeeData.key = currentEditedEmployeeData.id;
           currentEditedEmployeeData.dob = changeDateFormat(currentEmployeeData.dob, 'html');
@@ -45,13 +62,42 @@ const App = () => {
       });
   }, []);
 
+
+  // type ReducerActions =
+  //   | { 
+  //     type: '=' 
+  //     payload: {
+  //       data: ReducerState[];
+  //     }
+  //   }
+  //   | { 
+  //     type: '+' 
+  //     payload: {
+  //       data: ReducerState[];
+  //     }
+  //   }
+  //   | { 
+  //     type: '-' 
+  //     payload: {
+  //       data: ReducerState[];
+  //       id: number | string;
+  //     }
+  //   }
+  //   | { 
+  //     type: '~' 
+  //     payload: {
+  //       data: ReducerState[];
+  //       id: number | string;
+  //     }
+  //   };
+  
   /**
    * Reducer function to update empData state
-   * @param {*object} state state value automatically provided by Reducer
-   * @param {*object} action contains necessary properties action.type & action.payload to update the state 
-   * @returns {object} new updated state if action.type value is expected else returns same state value
+   * @param state state value automatically provided by Reducer
+   * @param action contains necessary properties action.type & action.payload to update the state 
+   * @returns new updated state if action.type value is expected else returns same state value
    */
-  const empReducer = (state, action) => {
+  const empReducer = (state:ReducerState[], action:ReducerActions) => {
     let stateCopy = JSON.parse(JSON.stringify(state));
     switch(action.type) {
       case ACTIONS.set: 
@@ -64,13 +110,13 @@ const App = () => {
         ];
         
       case ACTIONS.edit:
-        stateCopy.forEach((elem, index) => {
+        stateCopy.forEach((elem:ReducerState, index:number) => {
           if (elem.id === action.payload.id) stateCopy[index] = action.payload.data;
         });
         return stateCopy;        
 
       case ACTIONS.delete:
-        stateCopy = stateCopy.filter((element) => action.payload.id !== element.id);
+        stateCopy = stateCopy.filter((elem:ReducerState,) => action.payload.id !== elem.id);
         return stateCopy;  
 
       default:
@@ -81,7 +127,10 @@ const App = () => {
   /**
    * To store API call status
    */
-  const [loadInfo, setLoadInfo] = useState({
+  const [loadInfo, setLoadInfo] = useState<{
+    loading:boolean;
+    success: null | boolean;
+  }>({
     loading: true,
     success: null
   });
@@ -89,22 +138,34 @@ const App = () => {
   /**
    * To store table data from API
    */
-  const [empData, empDispatch] = useReducer(empReducer, []);
+  const [empData, empDispatch] = useReducer (empReducer, []);
+
   
   /**
    * To store antd columns & fields/inputs details
    */
-  const [empFieldsDetail, setEmpFieldsDetail] = useState(null);
+  interface Fields {
+    title: string;
+    dataIndex: string;
+    key: string;
+    inputType: string;
+    editable: boolean;
+  };
+  const [empFieldsDetail, setEmpFieldsDetail] = useState<null | Fields[]>(null);
 
   /**
    * To store Add operation related State
    */
-  const [addEmpToggle, setAddEmpToggle] = useState(false);
+  const [addEmpToggle, setAddEmpToggle] = useState<boolean>(false);
   
   /**
    * To store Edit operation related State
    */
-  const [editEmpToggle, setEditEmpToggle] = useState({
+   interface CUDOperation {
+    active: boolean;
+    id: null | string | number;
+  };
+  const [editEmpToggle, setEditEmpToggle] = useState<CUDOperation>({
     active: false,
     id: null
   });
@@ -112,7 +173,7 @@ const App = () => {
   /**
    * To store Edit operation related State
    */
-  const [viewEmpToggle, setViewEmpToggle] = useState({
+  const [viewEmpToggle, setViewEmpToggle] = useState<CUDOperation>({
     active: false,
     id: null
   });
@@ -120,18 +181,18 @@ const App = () => {
   /**
    * To store Delete operation related State
    */
-  const [deleteEmpToggle, setDeleteEmpToggle] = useState({
+  const [deleteEmpToggle, setDeleteEmpToggle] = useState<CUDOperation>({
     active: false,
     id: null
   });
   
   /**
-   * To attach necessary properties to each field which will be used further by antD columns and inputs while adding/editing data 
-   * @param {*Array} rawFields which is returned from the API result
-   * @returns {Array} refinedFields 
+   * To attach additional necessary properties to each field which will be used further by antD columns and inputs while adding/editing data 
+   * @param rawFields which is returned from the API result
+   * @returns 
    */
-  const generateEmpFieldsDetail = (rawFields) => {
-    let refinedFields = [];
+  const generateEmpFieldsDetail = (rawFields:string[]) :Fields[] => {
+    let refinedFields:Fields[] = [];
     rawFields.forEach((rawField) => {
       switch (rawField) {
         case "id":
@@ -139,7 +200,7 @@ const App = () => {
             title: "ID",
             dataIndex: rawField,
             key: rawField,
-            inputType: null,
+            inputType: "",
             editable: false
           });
           return;
@@ -202,10 +263,10 @@ const App = () => {
   };
 
   /**
-   * To activate view on view button click
-   * @param {*Object} emp data object that is to be edited
+   * To activate view on button click
+   * @param emp data object that is to be viewed 
    */
-   const activateView = (emp) => {
+   const activateView = (emp:CUDOperation):void => {
     setViewEmpToggle({
       active: true,
       id: emp.id
@@ -213,21 +274,21 @@ const App = () => {
   };
 
   /**
-   * To activate view on edit button click
-   * @param {*Object} emp data object that is to be edited
+   * To activate edit on button click
+   * @param emp data object that is to be edited 
    */
-  const activateEdit = (emp) => {
+  const activateEdit = (emp:CUDOperation):void => {
     setEditEmpToggle({
       active: true,
       id: emp.id
     });
   };
 
-  /**
-   * To activate delete on delete button click
-   * @param {*Object} emp data object that is to be deleted
+   /**
+   * To activate delete on button click
+   * @param emp data object that is to be deleteed 
    */
-  const activateDelete = (emp) => {
+  const activateDelete = (emp:CUDOperation):void => {
     setDeleteEmpToggle({
       active: true,
       id: emp.id
@@ -235,11 +296,11 @@ const App = () => {
   };
 
   /**
-   * To add html class to antd table row when edit or delete button is clicked
-   * @param {*Number} id id of the current row
-   * @returns {String} html class to be added to antd table row 
+   * To add html class which will change bg-color of antd table row when any action button is clicked
+   * @param id id of the current row
+   * @returns html class to be added to antd table row if any action active current
    */
-  const rowBgColor = (id) => {
+  const getRowClass = (id:string): string | string => {
     switch(id) {
       case deleteEmpToggle.id:
         return 'delete-active-row';
@@ -251,48 +312,47 @@ const App = () => {
         return 'view-active-row';
 
       default:
-        return
+        return '';
     }
   };
 
   /**
-   * To get list of all currently used id's 
-   * @returns {Array} of existing ids
+   * To get list of all currently used id's
+   * @returns Array of of existing ids
    */
-  const getUsedIDList = () => empData.map(emp => emp.id);
+  const getUsedIDList = ():number | string[] => empData.map((emp: { id: string; }) => emp.id);
   
   /**
-   * To get current active edit employee data object
-   * @returns {Object} 
+   * To get current active operational row  
+   * @returns 
    */
-  const getEmp = (type) => {
-    let emp = null; 
+  const getEmp = (type: 'view' | 'edit' | 'delete') => {
+    let emp:null | object = null; 
     switch (type) {
       case 'view': 
-        empData.forEach(curEmp => {
+        empData.forEach((curEmp: {id: null | string | number }) => {
           if(curEmp.id === viewEmpToggle.id) { 
             emp = {...curEmp};
           };
         });
-        return emp;
+        return emp!;
       case 'edit':
-        empData.forEach(curEmp => {
+        empData.forEach((curEmp: {id: null | string | number }) => {
           if(curEmp.id === editEmpToggle.id) { 
             emp = {...curEmp};
           };
         });
-        return emp;
+        return emp!;
       case 'delete':
-        empData.forEach(curEmp => {
+        empData.forEach((curEmp: {id: null | string | number }) => {
           if(curEmp.id === deleteEmpToggle.id) { 
             emp = {...curEmp};
           };
         });
-        return emp;
+        return emp!;
       default:
-        return emp;
+        return emp!;
     }
-    return emp;
   };
 
   return (
@@ -313,9 +373,9 @@ const App = () => {
                 </Button>
                 <Table
                   loading={loadInfo.loading}
-                  rowClassName={record => rowBgColor(record.id)}
-                  columns={empFieldsDetail && [
-                    ...empFieldsDetail, {
+                  rowClassName={record => getRowClass(record.id)}
+                  columns={empFieldsDetail! && [
+                    ...empFieldsDetail as any[], {
                       title: 'Actions',
                       key: 'actions',
                       render: (emp) => {
@@ -354,15 +414,18 @@ const App = () => {
                   ]}
                   dataSource={empData}
                 />
-                <AddEmployeeModal 
-                  loadSuccess={loadInfo.success}
-                  visible={addEmpToggle}
-                  empFieldsDetail={empFieldsDetail}
-                  usedIDList={getUsedIDList()} 
-                  onCancel={setAddEmpToggle}
-                  onOk={empDispatch}
-                />
-                <ViewEmployeeModal 
+                {
+                  (loadInfo.success && addEmpToggle) &&
+                  <AddEmployeeModal 
+                    loadSuccess={loadInfo.success}
+                    visible={addEmpToggle}
+                    empFieldsDetail={empFieldsDetail}
+                    usedIDList={getUsedIDList()} 
+                    onCancel={setAddEmpToggle}
+                    onOk={empDispatch}
+                  />
+                }
+                {/* <ViewEmployeeModal 
                   loadSuccess={loadInfo.success}
                   visible={viewEmpToggle.active}
                   id={viewEmpToggle.id}
@@ -387,7 +450,7 @@ const App = () => {
                   onOk={empDispatch}
                   onCancel={setDeleteEmpToggle}
                   deleteEmp={getEmp('delete')}
-                />
+                /> */}
               </>
             }
           </div>

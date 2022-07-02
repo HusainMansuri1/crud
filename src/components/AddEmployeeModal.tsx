@@ -1,10 +1,44 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button } from 'antd';
 import { ACTIONS, generateUniqueId } from "helpers";
 
+interface Fields {
+  title?: string
+  dataIndex: string
+  key: string
+  inputType: string;
+  editable: boolean;
+};
+interface Props {
+  visible: boolean;
+  onOk: Function;
+  onCancel: Function;
+  empFieldsDetail: null | Fields[];
+  usedIDList: Number | String[];
+  loadSuccess: null | boolean;
+};
+
+interface ReducerState {
+  id: number | string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  contactNumber: string;
+  dob: number | string;
+};
+
+interface EmptyReducerState {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  contactNumber: string;
+  dob: string;
+};
+
 const AddEmployeeModal = ({ 
   visible, onOk, onCancel, empFieldsDetail, usedIDList, loadSuccess 
-}) => {
+}: Props) : JSX.Element => {
   
   const [form] = Form.useForm();
 
@@ -12,9 +46,9 @@ const AddEmployeeModal = ({
    * To generate starter Data object with all editable fields as keys and empty values
    * @returns {object} 
    */
-  const getEmptyEmpData = () => {
-    let emptyEmpData = {};
-    empFieldsDetail && empFieldsDetail.map(field => {
+  const getEmptyEmpData = (): object => {
+    let emptyEmpData:any = {};
+    empFieldsDetail && empFieldsDetail.map((field) => {
       if(field.editable) {
         return emptyEmpData[field.dataIndex] = '';
       }
@@ -25,7 +59,7 @@ const AddEmployeeModal = ({
   /**
    * To store Add operation State
    */
-    const [addEmpData, setAddEmpData] = useState(getEmptyEmpData());
+  const [addEmpData, setAddEmpData] = useState(getEmptyEmpData());
 
   /**
    * To handle field value change
@@ -33,6 +67,13 @@ const AddEmployeeModal = ({
   useEffect(() => {
     form.setFieldsValue(addEmpData);
   }, [form, addEmpData])
+
+  /**
+   * To handle field change
+   */
+  useEffect(() => {
+    setAddEmpData(getEmptyEmpData());
+  }, [empFieldsDetail]);
   
   /**
    * To Add new employee to [App.js] State and related operations
@@ -57,16 +98,14 @@ const AddEmployeeModal = ({
   };
   
   return ( 
-    loadSuccess && 
     <Modal
-      forceRender 
+      forceRender={true}
       visible={visible}
       title="Add new record"
       onCancel={closeModal}
       footer={[
         <Button 
           key="cancel" 
-          type="secondary"
           onClick={closeModal}>
           Close
         </Button>
@@ -79,7 +118,7 @@ const AddEmployeeModal = ({
         // initialValues={addEmpData}
       >
         {
-          empFieldsDetail.map(field => {
+          empFieldsDetail?.map(field => {
             if(field.editable) {
               return(
                 <Form.Item
@@ -125,7 +164,6 @@ const AddEmployeeModal = ({
             Add
           </Button>  
           <Button 
-            type="secondary"
             onClick={() => setAddEmpData(getEmptyEmpData())} 
           >
             Reset
