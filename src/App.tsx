@@ -400,7 +400,7 @@ const App = () => {
                 />
                 }
                 
-                {/*
+                
                 <DeleteEmployeeModal 
                   visible={deleteEmpToggle.active}
                   id={deleteEmpToggle.id}
@@ -408,7 +408,7 @@ const App = () => {
                   onOk={empDispatch}
                   onCancel={setDeleteEmpToggle}
                   deleteEmp={getEmp('delete')}
-                /> */}
+                />
               </>
             }
           </div>
