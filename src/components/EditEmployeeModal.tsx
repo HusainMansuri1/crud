@@ -1,31 +1,35 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Input, Form, Button } from 'antd';
-import { ACTIONS, changeDateFormat } from "helpers";
+import { ACTIONS } from "helpers";
+
+interface Props {
+  visible: boolean;
+  onOk: Function;
+  onCancel: Function;
+  empFieldsDetail: null | Fields[];
+  id: null | string | number;
+  editEmp: {} | EmpDetails;
+};
 
 const EditEmployeeModal = ({ 
-  loadSuccess, visible, onOk, onCancel, empFieldsDetail, id, editEmp 
-}) => {
+  visible, onOk, onCancel, empFieldsDetail, id, editEmp 
+}: Props) => {
   const [form] = Form.useForm();
   
   /**
    * To store Edit operation  State
    */
-  const [editEmpData, setEditEmpData] = useState(null);
+  const [editEmpData, setEditEmpData] = useState<null | object | EmpDetails>(editEmp);
 
   /**
    * To store original backup of Edit operation  State
    */
-  const [editEmpDataBackup, setEditEmpDataBackup] = useState(null);
+  const [editEmpDataBackup, setEditEmpDataBackup] = useState<null | object | EmpDetails>(editEmp);
 
   useEffect(() => {
     setEditEmpData(editEmp);
     setEditEmpDataBackup(editEmp);
   }, [editEmp]);
-  
-  /**
-   * To store Date edit status 
-   */
-  const [dateEdited, setDateEdited] = useState(false);
 
   /**
    * To Edit employee to empData(App.js) State and related operations
@@ -58,7 +62,6 @@ const EditEmployeeModal = ({
   };
 
   return ( 
-    loadSuccess && 
     <Modal
       forceRender 
       visible={visible}
@@ -67,7 +70,6 @@ const EditEmployeeModal = ({
       footer={[
         <Button 
           key="cancel" 
-          type="secondary"
           onClick={closeModal}>
           Close
         </Button>
@@ -79,7 +81,7 @@ const EditEmployeeModal = ({
         onFinish={editEmpOperation}
       >
         {
-          empFieldsDetail.map(field => {
+          empFieldsDetail?.map(field => {
             return(
               <Form.Item
                 key={field.dataIndex}
@@ -123,7 +125,6 @@ const EditEmployeeModal = ({
             Edit
           </Button>  
           <Button 
-            type="secondary"
             onClick={() => setEditEmpData(editEmpDataBackup)} 
           >
             Reset

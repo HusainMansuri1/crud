@@ -107,7 +107,6 @@ const App = () => {
    */
   const [empData, empDispatch] = useReducer (empReducer, []);
 
-  
   /**
    * To store antd columns & fields/inputs details
    */
@@ -145,7 +144,7 @@ const App = () => {
   /**
    * To attach additional necessary properties to each field which will be used further by antD columns and inputs while adding/editing data 
    * @param rawFields which is returned from the API result
-   * @returns 
+   * @returns {void}
    */
   const generateEmpFieldsDetail = (rawFields:string[]) :Fields[] => {
     let refinedFields:Fields[] = [];
@@ -256,7 +255,7 @@ const App = () => {
    * @param id id of the current row
    * @returns html class to be added to antd table row if any action active current
    */
-  const getRowClass = (id:string): string | string => {
+  const getRowClass = (id:string): string => {
     switch(id) {
       case deleteEmpToggle.id:
         return 'delete-active-row';
@@ -286,28 +285,28 @@ const App = () => {
     let emp:object | EmpDetails = {}; 
     switch (type) {
       case 'view': 
-        empData.forEach((curEmp: {id: null | string | number }) => {
+        empData.forEach((curEmp: EmpDetails) => {
           if(curEmp.id === viewEmpToggle.id) { 
             emp = {...curEmp};
           };
         });
         return emp!;
       case 'edit':
-        empData.forEach((curEmp: {id: null | string | number }) => {
+        empData.forEach((curEmp: EmpDetails) => {
           if(curEmp.id === editEmpToggle.id) { 
             emp = {...curEmp};
           };
         });
         return emp!;
       case 'delete':
-        empData.forEach((curEmp: {id: null | string | number }) => {
+        empData.forEach((curEmp: EmpDetails) => {
           if(curEmp.id === deleteEmpToggle.id) { 
             emp = {...curEmp};
           };
         });
-        return emp!;
+        return emp;
       default:
-        return emp!;
+        return emp;
     }
   };
 
@@ -380,20 +379,28 @@ const App = () => {
                     onOk={empDispatch}
                   />
                 }
-                <ViewEmployeeModal 
-                  visible={viewEmpToggle.active}
-                  empFieldsDetail={empFieldsDetail}
-                  onCancel={setViewEmpToggle}
-                  viewEmp={getEmp('view')}
+                { 
+                  (loadInfo.success && viewEmpToggle.id) && 
+                  <ViewEmployeeModal 
+                    visible={viewEmpToggle.active}
+                    empFieldsDetail={empFieldsDetail}
+                    onCancel={setViewEmpToggle}
+                    viewEmp={getEmp('view')}
+                  />
+                }
+                {
+                  (loadInfo.success && editEmpToggle.id) && 
+                  <EditEmployeeModal 
+                    visible={editEmpToggle.active}
+                    id={editEmpToggle.id}
+                    empFieldsDetail={empFieldsDetail}
+                    onOk={empDispatch}
+                    onCancel={setEditEmpToggle}
+                    editEmp={getEmp('edit')}
                 />
-                {/* <EditEmployeeModal 
-                  visible={editEmpToggle.active}
-                  id={editEmpToggle.id}
-                  empFieldsDetail={empFieldsDetail}
-                  onOk={empDispatch}
-                  onCancel={setEditEmpToggle}
-                  editEmp={getEmp('edit')}
-                />
+                }
+                
+                {/*
                 <DeleteEmployeeModal 
                   visible={deleteEmpToggle.active}
                   id={deleteEmpToggle.id}
