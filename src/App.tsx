@@ -12,24 +12,15 @@ import { ACTIONS, apiEndPoint, changeDateFormat } from "helpers";
 import 'antd/dist/antd.css';
 import './index.scss';
 
-const App = () => {
-  interface ReducerState {
-    id: number | string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    contactNumber: string;
-    dob: number | string;
-  };
+interface ReducerActions {
+  type: string;
+  payload: {
+    data: EmpDetails[];
+    id?: number | string;
+  }
+};
 
-  interface ReducerActions {
-    type: string;
-    payload: {
-      data: ReducerState[];
-      id?: number | string;
-    }
-  };
-  
+const App = () => {  
   useEffect(() => {
     axios
       .get(apiEndPoint)
@@ -67,26 +58,26 @@ const App = () => {
   //   | { 
   //     type: '=' 
   //     payload: {
-  //       data: ReducerState[];
+  //       data: EmpDetails[];
   //     }
   //   }
   //   | { 
   //     type: '+' 
   //     payload: {
-  //       data: ReducerState[];
+  //       data: EmpDetails[];
   //     }
   //   }
   //   | { 
   //     type: '-' 
   //     payload: {
-  //       data: ReducerState[];
+  //       data: EmpDetails[];
   //       id: number | string;
   //     }
   //   }
   //   | { 
   //     type: '~' 
   //     payload: {
-  //       data: ReducerState[];
+  //       data: EmpDetails[];
   //       id: number | string;
   //     }
   //   };
@@ -97,7 +88,7 @@ const App = () => {
    * @param action contains necessary properties action.type & action.payload to update the state 
    * @returns new updated state if action.type value is expected else returns same state value
    */
-  const empReducer = (state:ReducerState[], action:ReducerActions) => {
+  const empReducer = (state:EmpDetails[], action:ReducerActions) => {
     let stateCopy = JSON.parse(JSON.stringify(state));
     switch(action.type) {
       case ACTIONS.set: 
@@ -110,13 +101,13 @@ const App = () => {
         ];
         
       case ACTIONS.edit:
-        stateCopy.forEach((elem:ReducerState, index:number) => {
+        stateCopy.forEach((elem:EmpDetails, index:number) => {
           if (elem.id === action.payload.id) stateCopy[index] = action.payload.data;
         });
         return stateCopy;        
 
       case ACTIONS.delete:
-        stateCopy = stateCopy.filter((elem:ReducerState,) => action.payload.id !== elem.id);
+        stateCopy = stateCopy.filter((elem:EmpDetails,) => action.payload.id !== elem.id);
         return stateCopy;  
 
       default:
@@ -144,13 +135,6 @@ const App = () => {
   /**
    * To store antd columns & fields/inputs details
    */
-  interface Fields {
-    title: string;
-    dataIndex: string;
-    key: string;
-    inputType: string;
-    editable: boolean;
-  };
   const [empFieldsDetail, setEmpFieldsDetail] = useState<null | Fields[]>(null);
 
   /**
@@ -327,7 +311,7 @@ const App = () => {
    * @returns 
    */
   const getEmp = (type: 'view' | 'edit' | 'delete') => {
-    let emp:null | object = null; 
+    let emp:object | EmpDetails = {}; 
     switch (type) {
       case 'view': 
         empData.forEach((curEmp: {id: null | string | number }) => {
@@ -417,7 +401,6 @@ const App = () => {
                 {
                   (loadInfo.success && addEmpToggle) &&
                   <AddEmployeeModal 
-                    loadSuccess={loadInfo.success}
                     visible={addEmpToggle}
                     empFieldsDetail={empFieldsDetail}
                     usedIDList={getUsedIDList()} 
@@ -425,28 +408,25 @@ const App = () => {
                     onOk={empDispatch}
                   />
                 }
-                {/* <ViewEmployeeModal 
-                  loadSuccess={loadInfo.success}
+                <ViewEmployeeModal 
                   visible={viewEmpToggle.active}
                   id={viewEmpToggle.id}
-                  empFieldsDetail={empFieldsDetail && empFieldsDetail}
+                  empFieldsDetail={empFieldsDetail}
                   onCancel={setViewEmpToggle}
                   viewEmp={getEmp('view')}
                 />
-                <EditEmployeeModal 
-                  loadSuccess={loadInfo.success}
+                {/* <EditEmployeeModal 
                   visible={editEmpToggle.active}
                   id={editEmpToggle.id}
-                  empFieldsDetail={empFieldsDetail && empFieldsDetail}
+                  empFieldsDetail={empFieldsDetail}
                   onOk={empDispatch}
                   onCancel={setEditEmpToggle}
                   editEmp={getEmp('edit')}
                 />
                 <DeleteEmployeeModal 
-                  loadSuccess={loadInfo.success}
                   visible={deleteEmpToggle.active}
                   id={deleteEmpToggle.id}
-                  empFieldsDetail={empFieldsDetail && empFieldsDetail}
+                  empFieldsDetail={empFieldsDetail}
                   onOk={empDispatch}
                   onCancel={setDeleteEmpToggle}
                   deleteEmp={getEmp('delete')}

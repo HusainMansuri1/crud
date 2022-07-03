@@ -2,42 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button } from 'antd';
 import { ACTIONS, generateUniqueId } from "helpers";
 
-interface Fields {
-  title?: string
-  dataIndex: string
-  key: string
-  inputType: string;
-  editable: boolean;
-};
 interface Props {
   visible: boolean;
   onOk: Function;
   onCancel: Function;
   empFieldsDetail: null | Fields[];
   usedIDList: Number | String[];
-  loadSuccess: null | boolean;
-};
-
-interface ReducerState {
-  id: number | string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  contactNumber: string;
-  dob: number | string;
-};
-
-interface EmptyReducerState {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  contactNumber: string;
-  dob: string;
 };
 
 const AddEmployeeModal = ({ 
-  visible, onOk, onCancel, empFieldsDetail, usedIDList, loadSuccess 
+  visible, onOk, onCancel, empFieldsDetail, usedIDList 
 }: Props) : JSX.Element => {
   
   const [form] = Form.useForm();
