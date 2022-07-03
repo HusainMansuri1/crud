@@ -1,10 +1,10 @@
 interface EmpDetails {
-  id: number | string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   contactNumber: string;
-  dob: number | string;
+  dob: Date;
 };
 
 interface Fields {

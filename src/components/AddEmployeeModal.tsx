@@ -7,7 +7,7 @@ interface Props {
   onOk: Function;
   onCancel: Function;
   empFieldsDetail: null | Fields[];
-  usedIDList: Number | String[];
+  usedIDList: string[];
 };
 
 const AddEmployeeModal = ({ 

@@ -22,7 +22,7 @@ interface ReducerActions {
 
 interface CUDOperation {
   active: boolean;
-  id: null | string | number;
+  id: null | string;
 };
 
 const App = () => {  
@@ -275,7 +275,7 @@ const App = () => {
    * To get list of all currently used id's
    * @returns Array of of existing ids
    */
-  const getUsedIDList = ():number | string[] => empData.map((emp: { id: string; }) => emp.id);
+  const getUsedIDList = (): string[] => empData.map((emp: { id: string; }) => emp.id);
   
   /**
    * To get current active operational row  
