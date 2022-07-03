@@ -316,10 +316,11 @@ const App = () => {
         <div className="app-main">
           <div className="container">
             {
-              (empData)
+              (loadInfo.success && empData)
               &&
               <>
                 <Button 
+                  disabled={!loadInfo.success}
                   type="primary"
                   style={{ marginBottom: 20 }}  
                   onClick={() => setAddEmpToggle(true)}
