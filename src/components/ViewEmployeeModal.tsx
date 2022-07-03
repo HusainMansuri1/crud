@@ -3,7 +3,6 @@ import { Modal, Input, Form, Button } from 'antd';
 
 interface Props {
   visible: boolean;
-  onOk: Function;
   onCancel: Function;
   empFieldsDetail: null | Fields[];
   viewEmp: {} | EmpDetails;

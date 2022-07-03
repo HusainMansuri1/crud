@@ -20,6 +20,11 @@ interface ReducerActions {
   }
 };
 
+interface CUDOperation {
+  active: boolean;
+  id: null | string | number;
+};
+
 const App = () => {  
   useEffect(() => {
     axios
@@ -53,35 +58,6 @@ const App = () => {
       });
   }, []);
 
-
-  // type ReducerActions =
-  //   | { 
-  //     type: '=' 
-  //     payload: {
-  //       data: EmpDetails[];
-  //     }
-  //   }
-  //   | { 
-  //     type: '+' 
-  //     payload: {
-  //       data: EmpDetails[];
-  //     }
-  //   }
-  //   | { 
-  //     type: '-' 
-  //     payload: {
-  //       data: EmpDetails[];
-  //       id: number | string;
-  //     }
-  //   }
-  //   | { 
-  //     type: '~' 
-  //     payload: {
-  //       data: EmpDetails[];
-  //       id: number | string;
-  //     }
-  //   };
-  
   /**
    * Reducer function to update empData state
    * @param state state value automatically provided by Reducer
@@ -145,10 +121,6 @@ const App = () => {
   /**
    * To store Edit operation related State
    */
-   interface CUDOperation {
-    active: boolean;
-    id: null | string | number;
-  };
   const [editEmpToggle, setEditEmpToggle] = useState<CUDOperation>({
     active: false,
     id: null
@@ -410,7 +382,6 @@ const App = () => {
                 }
                 <ViewEmployeeModal 
                   visible={viewEmpToggle.active}
-                  id={viewEmpToggle.id}
                   empFieldsDetail={empFieldsDetail}
                   onCancel={setViewEmpToggle}
                   viewEmp={getEmp('view')}
