@@ -1,4 +1,4 @@
-/*********** STICKY FOOTER(START)  **************/
+/*********** STICKY FOOTER(start)  **************/
 html,
 body,
 .App{display: flex;flex-direction: column;}
@@ -6,7 +6,7 @@ body,
 .app-main{flex-grow: 1;}
 /*********** STICKY FOOTER(END)  **************/
 
-/*********** Container (START)  **************/
+/*********** Container (start)  **************/
 .container {
   max-width: 1300px;
   padding-right: 15px;
@@ -17,10 +17,10 @@ body,
 }
 /*********** Container (end)  **************/
 
-/*********** App (START)  **************/
+/*********** App (start)  **************/
 /** Header */
 .app-header {
-  padding: 2px 0;
+  padding: 6px 0;
   margin-bottom: 20px;
   background-color: #3c3c3c;
   color: #fff;
@@ -30,7 +30,18 @@ body,
 /** Footer */
 .app-footer {
   background-color: #3c3c3c;
-  padding: 10px 0;
+  padding: 6px 0;
+  text-align: center;
+
+  &__text {
+    color: #fff;
+    font-weight: 600;
+
+    & a {
+      color: #fff;
+      text-decoration: underline;
+    }
+  }
 }
 /*********** App (end)  **************/
 

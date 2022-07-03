@@ -1,4 +1,8 @@
-const Header = (props) => {
+import React from 'react';
+
+const Header = (props:{
+  empCount: number
+}) => {
   return ( 
     <header className="app-header">
       <div className="container">

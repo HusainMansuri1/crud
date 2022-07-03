@@ -399,16 +399,17 @@ const App = () => {
                     editEmp={getEmp('edit')}
                 />
                 }
-                
-                
-                <DeleteEmployeeModal 
-                  visible={deleteEmpToggle.active}
-                  id={deleteEmpToggle.id}
-                  empFieldsDetail={empFieldsDetail}
-                  onOk={empDispatch}
-                  onCancel={setDeleteEmpToggle}
-                  deleteEmp={getEmp('delete')}
-                />
+                {
+                  (loadInfo.success && deleteEmpToggle.id) && 
+                  <DeleteEmployeeModal 
+                    visible={deleteEmpToggle.active}
+                    id={deleteEmpToggle.id}
+                    empFieldsDetail={empFieldsDetail}
+                    onOk={empDispatch}
+                    onCancel={setDeleteEmpToggle}
+                    deleteEmp={getEmp('delete')}
+                  />
+                }
               </>
             }
           </div>
