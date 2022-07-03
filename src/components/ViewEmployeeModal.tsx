@@ -1,10 +1,17 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Input, Form, Button } from 'antd';
-import { changeDateFormat } from "helpers";
+
+interface Props {
+  visible: boolean;
+  onOk: Function;
+  onCancel: Function;
+  empFieldsDetail: null | Fields[];
+  viewEmp: {} | EmpDetails;
+};
 
 const ViewEmployeeModal = ({ 
-  loadSuccess, visible, onCancel, empFieldsDetail, viewEmp 
-}) => {
+  visible, onCancel, empFieldsDetail, viewEmp 
+}: Props) => {
   const [form] = Form.useForm();
   
   useEffect(() => {
@@ -12,7 +19,6 @@ const ViewEmployeeModal = ({
   }, [form, viewEmp]);
 
   return ( 
-    loadSuccess && 
     <Modal
       forceRender 
       visible={visible}
@@ -24,7 +30,6 @@ const ViewEmployeeModal = ({
       footer={[
         <Button 
           key="cancel" 
-          type="secondary"
           onClick={() => onCancel({
             active: false,
             id: null
@@ -38,7 +43,7 @@ const ViewEmployeeModal = ({
         layout="vertical"
       >
         {
-          empFieldsDetail.map(field => {
+          empFieldsDetail?.map(field => {
             return(
               <Form.Item
                 key={field.dataIndex}
