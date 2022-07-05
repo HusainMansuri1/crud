@@ -21,19 +21,52 @@ const AddEmployeeModal = ({
    * @returns {object} 
    */
   const getEmptyEmpData = (): object => {
-    let emptyEmpData:any = {};
+    let emptyData:any = {};
     empFieldsDetail && empFieldsDetail.map((field) => {
       if(field.editable) {
-        return emptyEmpData[field.dataIndex] = '';
+        return emptyData[field.dataIndex] = '';
       }
     });
-    return emptyEmpData;
+    return emptyData;
+  };
+  const emptyEmpData = getEmptyEmpData();
+
+  /**
+   * To get dummy data for all fields which will be used in filling form
+   * @returns Object filled with dummy data for all keys
+   */
+  const getDummyEmpData = (): object => {
+    let dummyData:any = {...emptyEmpData};
+
+    Object.keys(dummyData).forEach(key => {
+      switch (key) {
+        case "firstName":
+          dummyData.firstName = "John";
+          return;
+        case "lastName":
+          dummyData.lastName = "Doe";
+          return;
+        case "email":
+          dummyData.email = "johndoe@dummyapis.com";
+          return;
+        case "contactNumber":
+          dummyData.contactNumber = "4759632158";
+          return;
+        case "dob":
+          dummyData.dob = new Date().toISOString().slice(0, 10);
+          return;
+        default:
+          return;
+      };
+    });
+
+    return dummyData;
   };
 
   /**
    * To store Add operation State
    */
-  const [addEmpData, setAddEmpData] = useState(getEmptyEmpData());
+  const [addEmpData, setAddEmpData] = useState(emptyEmpData);
 
   /**
    * To handle field value change
@@ -46,7 +79,7 @@ const AddEmployeeModal = ({
    * To handle field change
    */
   useEffect(() => {
-    setAddEmpData(getEmptyEmpData());
+    setAddEmpData(emptyEmpData);
   }, [empFieldsDetail]);
   
   /**
@@ -61,14 +94,14 @@ const AddEmployeeModal = ({
     /** Adding new employee to [App.js] State */
     onOk({ type: ACTIONS.add, payload: { data: addEmpCopy }});
     /** setting state to starter empty Data object */
-    setAddEmpData(getEmptyEmpData());
+    setAddEmpData(emptyEmpData);
     /**  disabling add toggle [App.js] State */
     onCancel(false);
   };
 
   const closeModal = () => {
     /** setting state to starter empty Data object */
-    setAddEmpData(getEmptyEmpData());
+    setAddEmpData(emptyEmpData);
     /** closing modal state[App.js] */
     onCancel(false);
   };
@@ -80,11 +113,13 @@ const AddEmployeeModal = ({
       title="Add new record"
       onCancel={closeModal}
       footer={[
+        <>
         <Button 
           key="cancel" 
           onClick={closeModal}>
           Close
         </Button>
+        </>
       ]}
     >
       <Form
@@ -138,7 +173,13 @@ const AddEmployeeModal = ({
             Add
           </Button>  
           <Button 
-            onClick={() => setAddEmpData(getEmptyEmpData())} 
+            onClick={() => setAddEmpData(getDummyEmpData())} 
+            style={{ marginRight: 10 }}
+          >
+            Fill Data
+          </Button>
+          <Button 
+            onClick={() => setAddEmpData(emptyEmpData)} 
           >
             Reset
           </Button>
