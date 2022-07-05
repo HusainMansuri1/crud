@@ -1,5 +1,5 @@
-import React, { useRef, useReducer, useEffect, useState } from "react";
-import { Table, Button, Form, Input, notification, InputNumber } from "antd";
+import React, { useEffect } from "react";
+import { Button, Form, Input } from "antd";
 
 interface Props {
   loadInfo: {

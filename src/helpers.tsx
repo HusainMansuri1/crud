@@ -1,5 +1,3 @@
-export const apiEndPoint = 'https://hub.dummyapis.com/employee?noofRecords=5&idStarts=1001';
-
 /** 
  * Actions to be used by useReducer
  */

@@ -91,7 +91,6 @@ const AddEmployeeModal = ({
         form={form}
         layout="vertical"
         onFinish={AddEmpOperation}
-        // initialValues={addEmpData}
       >
         {
           empFieldsDetail?.map(field => {
@@ -109,7 +108,6 @@ const AddEmployeeModal = ({
                   ]}
                 >
                   <Input 
-                    // required
                     key={field.dataIndex}
                     id={field.dataIndex}
                     type={field.inputType}

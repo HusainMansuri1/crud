@@ -9,7 +9,7 @@ import EditEmployeeModal from "components/EditEmployeeModal";
 import DeleteEmployeeModal from "components/DeleteEmployeeModal";
 import ViewEmployeeModal from "components/ViewEmployeeModal";
 import AddEmployeeModal from "components/AddEmployeeModal";
-import { ACTIONS, apiEndPoint, changeDateFormat } from "helpers";
+import { ACTIONS, changeDateFormat } from "helpers";
 import "antd/dist/antd.css";
 import "./index.scss";
 
@@ -37,76 +37,6 @@ const App = () => {
   const [apiLoadedCount, setApiLoadedCount] = useState<number>(0);
 
   const [apiLoadMoreToggle, setApiLoadMoreToggle] = useState<boolean>(false);
-
-  /** For First Load */
-  useEffect(() => {
-    setLoadInfo((prev) => ({ ...prev, loading: true }));
-    axios
-    .get(`https://hub.dummyapis.com/employee?noofRecords=${apiFirstLoadCount}&idStarts=${apiIdStartsAt}`)
-    .then((employeeData) => {
-      apiIdStartsAt += 4;
-      setApiLoadedCount(apiFirstLoadCount);
-      /** extracting required data from  api result */
-      const EditedEmployeeData = employeeData.data.map((currentEmployeeData: any) => {
-        const { address, imageUrl, salary, age, ...currentEditedEmployeeData } = currentEmployeeData;
-        currentEditedEmployeeData.key = currentEditedEmployeeData.id;
-        currentEditedEmployeeData.dob = changeDateFormat(currentEmployeeData.dob, "html");
-        return currentEditedEmployeeData;
-      });
-      return EditedEmployeeData;
-    })
-    .then((editedData) => {
-      /** updating state on success */
-        empDispatch({ type: ACTIONS.set, payload: { data: editedData } });
-        setEmpFieldsDetail(generateEmpFieldsDetail(Object.keys(editedData[0])));
-        setLoadInfo({ loading: false, success: true });
-      })
-      .catch((error) => {
-        console.error("employeeData error:", error);
-        notification.error({
-          duration: 10,
-          message: "Oops, Something went wrong! " + error,
-        });
-        /** updating state on error */
-        empDispatch({ type: ACTIONS.set, payload: { data: [] } });
-        setLoadInfo({ loading: false, success: false });
-      });
-  }, []);
-  
-  /** For LoadMore (will not run on first render)*/
-  const firstUpdate = useRef(true);
-  useEffect(() => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false;
-    } else {
-      setLoadInfo((prev) => ({ ...prev, loading: true }));
-      axios
-        .get(`https://hub.dummyapis.com/employee?noofRecords=${apiLoadMoreCount}&idStarts=${apiIdStartsAt+apiLoadedCount}`)
-        .then((employeeData) => {
-          /** extracting required data from  api result */
-          const EditedEmployeeData = employeeData.data.map((currentEmployeeData: any) => {
-            const { address, imageUrl, salary, age, ...currentEditedEmployeeData } = currentEmployeeData;
-            currentEditedEmployeeData.key = currentEditedEmployeeData.id;
-            currentEditedEmployeeData.dob = changeDateFormat(currentEmployeeData.dob, "html");
-            return currentEditedEmployeeData;
-          });
-          return EditedEmployeeData;
-        })
-        .then(editedData => {
-          /** updating state on success */
-          empDispatch({ type: ACTIONS.set, payload: { data: editedData } });
-          setApiLoadedCount(prevState => prevState + apiLoadMoreCount);
-          setLoadInfo({ loading: false, success: true });
-        })
-        .catch((error) => {
-          console.error("employeeData LoadMore error:", error);
-          notification.error({
-            duration: 10,
-            message: "Oops, Something went wrong! " + error,
-          });
-        });
-    }
-  }, [apiLoadMoreToggle]);
 
   /**
    * Reducer function to update empData state
@@ -357,12 +287,82 @@ const App = () => {
     }
   };
 
+  /** For First Load */
+  useEffect(() => {
+    setLoadInfo((prev) => ({ ...prev, loading: true }));
+    axios
+    .get(`https://hub.dummyapis.com/employee?noofRecords=${apiFirstLoadCount}&idStarts=${apiIdStartsAt}`)
+    .then((employeeData) => {
+      apiIdStartsAt += 4;
+      setApiLoadedCount(apiFirstLoadCount);
+      /** extracting required data from  api result */
+      const EditedEmployeeData = employeeData.data.map((currentEmployeeData: any) => {
+        const { address, imageUrl, salary, age, ...currentEditedEmployeeData } = currentEmployeeData;
+        currentEditedEmployeeData.key = currentEditedEmployeeData.id;
+        currentEditedEmployeeData.dob = changeDateFormat(currentEmployeeData.dob, "html");
+        return currentEditedEmployeeData;
+      });
+      return EditedEmployeeData;
+    })
+    .then((editedData) => {
+      /** updating state on success */
+      empDispatch({ type: ACTIONS.set, payload: { data: editedData } });
+      setEmpFieldsDetail(generateEmpFieldsDetail(Object.keys(editedData[0])));
+      setLoadInfo({ loading: false, success: true });
+    })
+    .catch((error) => {
+      console.error("employeeData error:", error);
+      notification.error({
+        duration: 10,
+        message: "Oops, Something went wrong! " + error,
+      });
+      /** updating state on error */
+      empDispatch({ type: ACTIONS.set, payload: { data: [] } });
+      setLoadInfo({ loading: false, success: false });
+    });
+  }, []);
+  
+  /** For LoadMore (will not run on first render)*/
+  const firstUpdate = useRef(true);
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+    } else {
+      setLoadInfo((prev) => ({ ...prev, loading: true }));
+      axios
+        .get(`https://hub.dummyapis.com/employee?noofRecords=${apiLoadMoreCount}&idStarts=${apiIdStartsAt+apiLoadedCount}`)
+        .then((employeeData) => {
+          /** extracting required data from  api result */
+          const EditedEmployeeData = employeeData.data.map((currentEmployeeData: any) => {
+            const { address, imageUrl, salary, age, ...currentEditedEmployeeData } = currentEmployeeData;
+            currentEditedEmployeeData.key = currentEditedEmployeeData.id;
+            currentEditedEmployeeData.dob = changeDateFormat(currentEmployeeData.dob, "html");
+            return currentEditedEmployeeData;
+          });
+          return EditedEmployeeData;
+        })
+        .then(editedData => {
+          /** updating state on success */
+          empDispatch({ type: ACTIONS.set, payload: { data: editedData } });
+          setApiLoadedCount(prevState => prevState + apiLoadMoreCount);
+          setLoadInfo({ loading: false, success: true });
+        })
+        .catch((error) => {
+          console.error("employeeData LoadMore error:", error);
+          notification.error({
+            duration: 10,
+            message: "Oops, Something went wrong! " + error,
+          });
+        });
+    }
+  }, [apiLoadMoreToggle]);
+
   return (
     <div className='App'>
       <Header empCount={empData.length} />
       <div className='app-main'>
         <div className='container'>
-          {loadInfo.success && empData && (
+          {(loadInfo.success && empData) && (
             <>
               <LoadMore 
                 loadInfo={loadInfo}
@@ -408,10 +408,47 @@ const App = () => {
                 }
                 dataSource={empData}
               />
-              {loadInfo.success && addEmpToggle && <AddEmployeeModal visible={addEmpToggle} empFieldsDetail={empFieldsDetail} usedIDList={getUsedIDList()} onCancel={setAddEmpToggle} onOk={empDispatch} />}
-              {loadInfo.success && viewEmpToggle.id && <ViewEmployeeModal visible={viewEmpToggle.active} empFieldsDetail={empFieldsDetail} onCancel={setViewEmpToggle} viewEmp={getEmp("view")} />}
-              {loadInfo.success && editEmpToggle.id && <EditEmployeeModal visible={editEmpToggle.active} id={editEmpToggle.id} empFieldsDetail={empFieldsDetail} onOk={empDispatch} onCancel={setEditEmpToggle} editEmp={getEmp("edit")} />}
-              {loadInfo.success && deleteEmpToggle.id && <DeleteEmployeeModal visible={deleteEmpToggle.active} id={deleteEmpToggle.id} empFieldsDetail={empFieldsDetail} onOk={empDispatch} onCancel={setDeleteEmpToggle} deleteEmp={getEmp("delete")} />}
+              { 
+                (loadInfo.success && addEmpToggle) && 
+                <AddEmployeeModal 
+                  visible={addEmpToggle} 
+                  empFieldsDetail={empFieldsDetail} 
+                  usedIDList={getUsedIDList()} 
+                  onCancel={setAddEmpToggle} 
+                  onOk={empDispatch} 
+                />
+              }
+              {
+                (loadInfo.success && viewEmpToggle.id) && 
+                <ViewEmployeeModal 
+                  visible={viewEmpToggle.active} 
+                  empFieldsDetail={empFieldsDetail} 
+                  onCancel={setViewEmpToggle} 
+                  viewEmp={getEmp("view")} 
+                />
+              }
+              {
+                (loadInfo.success && editEmpToggle.id) && 
+                <EditEmployeeModal 
+                  visible={editEmpToggle.active} 
+                  id={editEmpToggle.id} 
+                  empFieldsDetail={empFieldsDetail} 
+                  onOk={empDispatch} 
+                  onCancel={setEditEmpToggle} 
+                  editEmp={getEmp("edit")} 
+                />
+              }
+              {
+                (loadInfo.success && deleteEmpToggle.id) && 
+                <DeleteEmployeeModal 
+                  visible={deleteEmpToggle.active} 
+                  id={deleteEmpToggle.id} 
+                  empFieldsDetail={empFieldsDetail} 
+                  onOk={empDispatch} 
+                  onCancel={setDeleteEmpToggle} 
+                  deleteEmp={getEmp("delete")} 
+                />
+              }
             </>
           )}
         </div>
