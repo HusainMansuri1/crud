@@ -40,7 +40,7 @@ export const changeDateFormat = (rawDate:any, changeToFormat: 'api' | 'html') =>
    * @param value numerical value
    * @returns appends zero to value if value is of one digit
    */
-  const addZero = (value:number): number => (value < 10 ? Number("0" + value) : value);  
+  const addZero = (value:number): number | string => (value < 10 ? "0" + value : value);  
   
   switch (changeToFormat) {
     case 'api':
