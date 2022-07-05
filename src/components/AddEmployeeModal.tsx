@@ -54,8 +54,10 @@ const AddEmployeeModal = ({
    */
   const AddEmpOperation = () => {
     let addEmpCopy = JSON.parse(JSON.stringify(addEmpData));
-    /** Adding dynamic ID */
-    addEmpCopy.id = generateUniqueId(usedIDList);
+    /** Adding dynamic ID & key*/
+    const id = generateUniqueId(usedIDList);
+    addEmpCopy.id = id;
+    addEmpCopy.key = id;
     /** Adding new employee to [App.js] State */
     onOk({ type: ACTIONS.add, payload: { data: addEmpCopy }});
     /** setting state to starter empty Data object */
