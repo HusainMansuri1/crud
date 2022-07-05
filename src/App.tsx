@@ -1,7 +1,7 @@
 import React, { useRef, useReducer, useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Button, Form, Input, notification } from "antd";
-import { EditOutlined, DeleteOutlined, EyeOutlined } from "@ant-design/icons";
+import { Table, Button, notification, Spin } from "antd";
+import { EditOutlined, DeleteOutlined, EyeOutlined, LoadingOutlined } from "@ant-design/icons";
 import Header from "components/Header";
 import Footer from "components/Footer";
 import LoadMore from "components/LoadMore";
@@ -74,9 +74,11 @@ const App = () => {
   const [loadInfo, setLoadInfo] = useState<{
     loading: boolean;
     success: null | boolean;
+    firstLoadComplete: boolean;
   }>({
     loading: true,
     success: null,
+    firstLoadComplete: false,
   });
 
   /**
@@ -289,7 +291,7 @@ const App = () => {
 
   /** For First Load */
   useEffect(() => {
-    setLoadInfo((prev) => ({ ...prev, loading: true }));
+    setLoadInfo(prevState => ({ ...prevState, loading: true }));
     axios
     .get(`https://hub.dummyapis.com/employee?noofRecords=${apiFirstLoadCount}&idStarts=${apiIdStartsAt}`)
     .then((employeeData) => {
@@ -308,7 +310,7 @@ const App = () => {
       /** updating state on success */
       empDispatch({ type: ACTIONS.set, payload: { data: editedData } });
       setEmpFieldsDetail(generateEmpFieldsDetail(Object.keys(editedData[0])));
-      setLoadInfo({ loading: false, success: true });
+      setLoadInfo({ loading: false, success: true, firstLoadComplete: true });
     })
     .catch((error) => {
       console.error("employeeData error:", error);
@@ -318,7 +320,7 @@ const App = () => {
       });
       /** updating state on error */
       empDispatch({ type: ACTIONS.set, payload: { data: [] } });
-      setLoadInfo({ loading: false, success: false });
+      setLoadInfo({ loading: false, success: false, firstLoadComplete: false });
     });
   }, []);
   
@@ -328,7 +330,8 @@ const App = () => {
     if (firstUpdate.current) {
       firstUpdate.current = false;
     } else {
-      setLoadInfo((prev) => ({ ...prev, loading: true }));
+      /** if not first render */
+      setLoadInfo(prevState => ({ ...prevState, loading: true }));
       axios
         .get(`https://hub.dummyapis.com/employee?noofRecords=${apiLoadMoreCount}&idStarts=${apiIdStartsAt+apiLoadedCount}`)
         .then((employeeData) => {
@@ -345,7 +348,7 @@ const App = () => {
           /** updating state on success */
           empDispatch({ type: ACTIONS.set, payload: { data: editedData } });
           setApiLoadedCount(prevState => prevState + apiLoadMoreCount);
-          setLoadInfo({ loading: false, success: true });
+          setLoadInfo(prevState => ({ ...prevState, loading: false, success: true }));
         })
         .catch((error) => {
           console.error("employeeData LoadMore error:", error);
@@ -360,99 +363,101 @@ const App = () => {
   return (
     <div className='App'>
       <Header empCount={empData.length} />
-      <div className='app-main'>
-        <div className='container'>
-          {(loadInfo.success && empData) && (
-            <>
-              <LoadMore 
-                loadInfo={loadInfo}
-                apiLoadMoreCount={apiLoadMoreCount}
-                setApiLoadMoreToggle={setApiLoadMoreToggle}
-                setApiLoadMoreCount={setApiLoadMoreCount}
-              />
-              <Button 
-                disabled={!loadInfo.success || loadInfo.loading} 
-                type='primary' 
-                style={{ 
-                  marginBottom: 20, 
-                  background: "#41cfc2",
-                  borderColor: "#41cfc2",
-                  fontWeight: 500
-                }}
-                onClick={() => setAddEmpToggle(true)}
-              >
-                 Input New row
-              </Button>
-              <Table
-                loading={loadInfo.loading}
-                rowClassName={(record) => getRowClass(record.id)}
-                columns={
-                  empFieldsDetail! && [
-                    ...(empFieldsDetail as any[]),
-                    {
-                      title: "Actions",
-                      key: "actions",
-                      render: (emp) => {
-                        return (
-                          <>
-                            <Button className='action-btn action-btn__view' shape='circle' size='middle' icon={<EyeOutlined style={{ color: "#0031ff" }} />} style={{ margin: "0 5px" }} onClick={() => activateView(emp)} />
+        <div className='app-main'>
+          <Spin spinning={!loadInfo.firstLoadComplete && loadInfo.loading} indicator={<LoadingOutlined style={{ fontSize: 50 }} spin />}>
+            <div className='container'>
+              {(loadInfo.success && empData) && (
+                <>
+                  <LoadMore 
+                    loadInfo={loadInfo}
+                    apiLoadMoreCount={apiLoadMoreCount}
+                    setApiLoadMoreToggle={setApiLoadMoreToggle}
+                    setApiLoadMoreCount={setApiLoadMoreCount}
+                  />
+                  <Button 
+                    disabled={!loadInfo.success || loadInfo.loading} 
+                    type='primary' 
+                    style={{ 
+                      marginBottom: 20, 
+                      background: "#41cfc2",
+                      borderColor: "#41cfc2",
+                      fontWeight: 500
+                    }}
+                    onClick={() => setAddEmpToggle(true)}
+                  >
+                    Input New row
+                  </Button>
+                  <Table
+                    loading={loadInfo.loading}
+                    rowClassName={(record) => getRowClass(record.id)}
+                    columns={
+                      empFieldsDetail! && [
+                        ...(empFieldsDetail as any[]),
+                        {
+                          title: "Actions",
+                          key: "actions",
+                          render: (emp) => {
+                            return (
+                              <>
+                                <Button className='action-btn action-btn__view' shape='circle' size='middle' icon={<EyeOutlined style={{ color: "#0031ff" }} />} style={{ margin: "0 5px" }} onClick={() => activateView(emp)} />
 
-                            <Button className='action-btn action-btn__edit' shape='circle' size='middle' icon={<EditOutlined style={{ color: "#009688" }} />} style={{ margin: "0 5px" }} onClick={() => activateEdit(emp)} />
+                                <Button className='action-btn action-btn__edit' shape='circle' size='middle' icon={<EditOutlined style={{ color: "#009688" }} />} style={{ margin: "0 5px" }} onClick={() => activateEdit(emp)} />
 
-                            <Button className='action-btn action-btn__delete' shape='circle' size='middle' icon={<DeleteOutlined style={{ color: "#ff0000" }} />} style={{ margin: "0 5px" }} onClick={() => activateDelete(emp)} />
-                          </>
-                        );
-                      },
-                    },
-                  ]
-                }
-                dataSource={empData}
-              />
-              { 
-                (loadInfo.success && addEmpToggle) && 
-                <AddEmployeeModal 
-                  visible={addEmpToggle} 
-                  empFieldsDetail={empFieldsDetail} 
-                  usedIDList={getUsedIDList()} 
-                  onCancel={setAddEmpToggle} 
-                  onOk={empDispatch} 
-                />
-              }
-              {
-                (loadInfo.success && viewEmpToggle.id) && 
-                <ViewEmployeeModal 
-                  visible={viewEmpToggle.active} 
-                  empFieldsDetail={empFieldsDetail} 
-                  onCancel={setViewEmpToggle} 
-                  viewEmp={getEmp("view")} 
-                />
-              }
-              {
-                (loadInfo.success && editEmpToggle.id) && 
-                <EditEmployeeModal 
-                  visible={editEmpToggle.active} 
-                  id={editEmpToggle.id} 
-                  empFieldsDetail={empFieldsDetail} 
-                  onOk={empDispatch} 
-                  onCancel={setEditEmpToggle} 
-                  editEmp={getEmp("edit")} 
-                />
-              }
-              {
-                (loadInfo.success && deleteEmpToggle.id) && 
-                <DeleteEmployeeModal 
-                  visible={deleteEmpToggle.active} 
-                  id={deleteEmpToggle.id} 
-                  empFieldsDetail={empFieldsDetail} 
-                  onOk={empDispatch} 
-                  onCancel={setDeleteEmpToggle} 
-                  deleteEmp={getEmp("delete")} 
-                />
-              }
-            </>
-          )}
+                                <Button className='action-btn action-btn__delete' shape='circle' size='middle' icon={<DeleteOutlined style={{ color: "#ff0000" }} />} style={{ margin: "0 5px" }} onClick={() => activateDelete(emp)} />
+                              </>
+                            );
+                          },
+                        },
+                      ]
+                    }
+                    dataSource={empData}
+                  />
+                  { 
+                    (loadInfo.success && addEmpToggle) && 
+                    <AddEmployeeModal 
+                      visible={addEmpToggle} 
+                      empFieldsDetail={empFieldsDetail} 
+                      usedIDList={getUsedIDList()} 
+                      onCancel={setAddEmpToggle} 
+                      onOk={empDispatch} 
+                    />
+                  }
+                  {
+                    (loadInfo.success && viewEmpToggle.id) && 
+                    <ViewEmployeeModal 
+                      visible={viewEmpToggle.active} 
+                      empFieldsDetail={empFieldsDetail} 
+                      onCancel={setViewEmpToggle} 
+                      viewEmp={getEmp("view")} 
+                    />
+                  }
+                  {
+                    (loadInfo.success && editEmpToggle.id) && 
+                    <EditEmployeeModal 
+                      visible={editEmpToggle.active} 
+                      id={editEmpToggle.id} 
+                      empFieldsDetail={empFieldsDetail} 
+                      onOk={empDispatch} 
+                      onCancel={setEditEmpToggle} 
+                      editEmp={getEmp("edit")} 
+                    />
+                  }
+                  {
+                    (loadInfo.success && deleteEmpToggle.id) && 
+                    <DeleteEmployeeModal 
+                      visible={deleteEmpToggle.active} 
+                      id={deleteEmpToggle.id} 
+                      empFieldsDetail={empFieldsDetail} 
+                      onOk={empDispatch} 
+                      onCancel={setDeleteEmpToggle} 
+                      deleteEmp={getEmp("delete")} 
+                    />
+                  }
+                </>
+              )}
+            </div>
+          </Spin>
         </div>
-      </div>
       <Footer />
     </div>
   );
