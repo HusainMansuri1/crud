@@ -12,6 +12,7 @@ import AddEmployeeModal from "components/AddEmployeeModal";
 import { ACTIONS, changeDateFormat } from "helpers";
 import "antd/dist/antd.css";
 import "./index.scss";
+import SearchFilter from "components/SearchFilter";
 
 interface ReducerActions {
   type: string;
@@ -119,6 +120,7 @@ const App = () => {
     active: false,
     id: null,
   });
+  
 
   /**
    * To attach additional necessary properties to each field which will be used further by antD columns and inputs while adding/editing data
@@ -227,6 +229,28 @@ const App = () => {
       active: true,
       id: emp.id,
     });
+  };
+
+
+  /**
+   * To store searchQuery state
+   */
+  const [searchQuery, setSearchQuery] = useState<any>("");
+  
+  /**
+   * To provide filtered results by given search-input(searchQuery) to antd-table data-src
+   * @returns array of data matching the search input
+   */
+  const getSearchResults = (): EmpDetails[] => {
+    // TODO: Implement below using dynamic field code
+    return empData.filter((curEmp: EmpDetails) => (
+      String(curEmp.id).toLocaleLowerCase().includes(searchQuery) ||
+      String(curEmp.firstName).toLocaleLowerCase().includes(searchQuery) ||
+      String(curEmp.lastName).toLocaleLowerCase().includes(searchQuery) ||
+      String(curEmp.contactNumber).toLocaleLowerCase().includes(searchQuery) ||
+      String(curEmp.dob).toLocaleLowerCase().includes(searchQuery) ||
+      String(curEmp.email).toLocaleLowerCase().includes(searchQuery) 
+    ));
   };
 
   /**
@@ -374,6 +398,10 @@ const App = () => {
                     setApiLoadMoreToggle={setApiLoadMoreToggle}
                     setApiLoadMoreCount={setApiLoadMoreCount}
                   />
+                  <SearchFilter 
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                  />
                   <Button 
                     disabled={!loadInfo.success || loadInfo.loading} 
                     type='primary' 
@@ -381,7 +409,8 @@ const App = () => {
                       marginBottom: 20, 
                       background: "#41cfc2",
                       borderColor: "#41cfc2",
-                      fontWeight: 500
+                      fontWeight: 500,
+                      display: "block",
                     }}
                     onClick={() => setAddEmpToggle(true)}
                   >
@@ -399,18 +428,37 @@ const App = () => {
                           render: (emp) => {
                             return (
                               <>
-                                <Button className='action-btn action-btn__view' shape='circle' size='middle' icon={<EyeOutlined style={{ color: "#0031ff" }} />} style={{ margin: "0 5px" }} onClick={() => activateView(emp)} />
-
-                                <Button className='action-btn action-btn__edit' shape='circle' size='middle' icon={<EditOutlined style={{ color: "#009688" }} />} style={{ margin: "0 5px" }} onClick={() => activateEdit(emp)} />
-
-                                <Button className='action-btn action-btn__delete' shape='circle' size='middle' icon={<DeleteOutlined style={{ color: "#ff0000" }} />} style={{ margin: "0 5px" }} onClick={() => activateDelete(emp)} />
+                                <Button 
+                                  className='action-btn action-btn__view' 
+                                  shape='circle' 
+                                  size='middle' 
+                                  icon={<EyeOutlined style={{ color: "#0031ff" }} />} 
+                                  style={{ margin: "0 5px" }} 
+                                  onClick={() => activateView(emp)} 
+                                />
+                                <Button 
+                                  className='action-btn action-btn__edit' 
+                                  shape='circle' 
+                                  size='middle' 
+                                  icon={<EditOutlined style={{ color: "#009688" }} />} 
+                                  style={{ margin: "0 5px" }} 
+                                  onClick={() => activateEdit(emp)} 
+                                />
+                                <Button 
+                                  className='action-btn action-btn__delete' 
+                                  shape='circle' 
+                                  size='middle' 
+                                  icon={<DeleteOutlined style={{ color: "#ff0000" }} />} 
+                                  style={{ margin: "0 5px" }} 
+                                  onClick={() => activateDelete(emp)} 
+                                />
                               </>
                             );
                           },
                         },
                       ]
                     }
-                    dataSource={empData}
+                    dataSource={getSearchResults()}
                   />
                   { 
                     (loadInfo.success && addEmpToggle) && 
