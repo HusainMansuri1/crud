@@ -2,11 +2,15 @@ import { Form, Input } from 'antd';
 import React, { useEffect } from 'react'
 
 interface Props {
+  loadInfo: {
+    loading: boolean;
+    success: null | boolean;
+  };
   searchQuery: string;
   setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SearchFilter = ({ searchQuery, setSearchQuery } : Props) => {
+const SearchFilter = ({ loadInfo, searchQuery, setSearchQuery } : Props) => {
 
   const [form] = Form.useForm();
 
@@ -24,6 +28,7 @@ const SearchFilter = ({ searchQuery, setSearchQuery } : Props) => {
         >
           <Input 
             type="search"
+            disabled={!loadInfo.success || loadInfo.loading}
             allowClear
             onChange={e => setSearchQuery(e.target.value)}
           />

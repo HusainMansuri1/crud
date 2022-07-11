@@ -5,6 +5,7 @@ import { EditOutlined, DeleteOutlined, EyeOutlined, LoadingOutlined } from "@ant
 import Header from "components/Header";
 import Footer from "components/Footer";
 import LoadMore from "components/LoadMore";
+import SearchFilter from "components/SearchFilter";
 import EditEmployeeModal from "components/EditEmployeeModal";
 import DeleteEmployeeModal from "components/DeleteEmployeeModal";
 import ViewEmployeeModal from "components/ViewEmployeeModal";
@@ -12,7 +13,6 @@ import AddEmployeeModal from "components/AddEmployeeModal";
 import { ACTIONS, changeDateFormat } from "helpers";
 import "antd/dist/antd.css";
 import "./index.scss";
-import SearchFilter from "components/SearchFilter";
 
 interface ReducerActions {
   type: string;
@@ -38,6 +38,16 @@ const App = () => {
   const [apiLoadedCount, setApiLoadedCount] = useState<number>(0);
 
   const [apiLoadMoreToggle, setApiLoadMoreToggle] = useState<boolean>(false);
+
+  const [loadInfo, setLoadInfo] = useState<{
+    loading: boolean;
+    success: null | boolean;
+    firstLoadComplete: boolean;
+  }>({
+    loading: true,
+    success: null,
+    firstLoadComplete: false,
+  });
 
   /**
    * Reducer function to update empData state
@@ -70,19 +80,6 @@ const App = () => {
   };
 
   /**
-   * To store API call status
-   */
-  const [loadInfo, setLoadInfo] = useState<{
-    loading: boolean;
-    success: null | boolean;
-    firstLoadComplete: boolean;
-  }>({
-    loading: true,
-    success: null,
-    firstLoadComplete: false,
-  });
-
-  /**
    * To store table data from API
    */
   const [empData, empDispatch] = useReducer(empReducer, []);
@@ -93,39 +90,9 @@ const App = () => {
   const [empFieldsDetail, setEmpFieldsDetail] = useState<null | Fields[]>(null);
 
   /**
-   * To store Add operation related State
-   */
-  const [addEmpToggle, setAddEmpToggle] = useState<boolean>(false);
-
-  /**
-   * To store Edit operation related State
-   */
-  const [editEmpToggle, setEditEmpToggle] = useState<CUDOperation>({
-    active: false,
-    id: null,
-  });
-
-  /**
-   * To store Edit operation related State
-   */
-  const [viewEmpToggle, setViewEmpToggle] = useState<CUDOperation>({
-    active: false,
-    id: null,
-  });
-
-  /**
-   * To store Delete operation related State
-   */
-  const [deleteEmpToggle, setDeleteEmpToggle] = useState<CUDOperation>({
-    active: false,
-    id: null,
-  });
-  
-
-  /**
    * To attach additional necessary properties to each field which will be used further by antD columns and inputs while adding/editing data
    * @param rawFields which is returned from the API result
-   * @returns {void}
+   * @returns Fields with additional necessary information
    */
   const generateEmpFieldsDetail = (rawFields: string[]): Fields[] => {
     let refinedFields: Fields[] = [];
@@ -197,46 +164,8 @@ const App = () => {
     });
     return refinedFields;
   };
-
-  /**
-   * To activate view on button click
-   * @param emp data object that is to be viewed
-   */
-  const activateView = (emp: CUDOperation): void => {
-    setViewEmpToggle({
-      active: true,
-      id: emp.id,
-    });
-  };
-
-  /**
-   * To activate edit on button click
-   * @param emp data object that is to be edited
-   */
-  const activateEdit = (emp: CUDOperation): void => {
-    setEditEmpToggle({
-      active: true,
-      id: emp.id,
-    });
-  };
-
-  /**
-   * To activate delete on button click
-   * @param emp data object that is to be deleteed
-   */
-  const activateDelete = (emp: CUDOperation): void => {
-    setDeleteEmpToggle({
-      active: true,
-      id: emp.id,
-    });
-  };
-
-
-  /**
-   * To store searchQuery state
-   */
-  const [searchQuery, setSearchQuery] = useState<any>("");
   
+  const [searchQuery, setSearchQuery] = useState<string>("");
   /**
    * To provide filtered results by given search-input(searchQuery) to antd-table data-src
    * @returns array of data matching the search input
@@ -253,6 +182,26 @@ const App = () => {
     ));
   };
 
+  /**
+   * To store CRUD operation related State
+   */
+  const [addEmpToggle, setAddEmpToggle] = useState<boolean>(false);
+
+  const [editEmpToggle, setEditEmpToggle] = useState<CUDOperation>({
+    active: false,
+    id: null,
+  });
+
+  const [viewEmpToggle, setViewEmpToggle] = useState<CUDOperation>({
+    active: false,
+    id: null,
+  });
+
+  const [deleteEmpToggle, setDeleteEmpToggle] = useState<CUDOperation>({
+    active: false,
+    id: null,
+  });
+  
   /**
    * To add html class which will change bg-color of antd table row when any action button is clicked
    * @param id id of the current row
@@ -399,6 +348,7 @@ const App = () => {
                     setApiLoadMoreCount={setApiLoadMoreCount}
                   />
                   <SearchFilter 
+                    loadInfo={loadInfo}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                   />
@@ -434,7 +384,10 @@ const App = () => {
                                   size='middle' 
                                   icon={<EyeOutlined style={{ color: "#0031ff" }} />} 
                                   style={{ margin: "0 5px" }} 
-                                  onClick={() => activateView(emp)} 
+                                  onClick={() => setViewEmpToggle({
+                                    active: true,
+                                    id: emp.id,
+                                  })} 
                                 />
                                 <Button 
                                   className='action-btn action-btn__edit' 
@@ -442,7 +395,10 @@ const App = () => {
                                   size='middle' 
                                   icon={<EditOutlined style={{ color: "#009688" }} />} 
                                   style={{ margin: "0 5px" }} 
-                                  onClick={() => activateEdit(emp)} 
+                                  onClick={() =>  setEditEmpToggle({
+                                    active: true,
+                                    id: emp.id,
+                                  })} 
                                 />
                                 <Button 
                                   className='action-btn action-btn__delete' 
@@ -450,7 +406,10 @@ const App = () => {
                                   size='middle' 
                                   icon={<DeleteOutlined style={{ color: "#ff0000" }} />} 
                                   style={{ margin: "0 5px" }} 
-                                  onClick={() => activateDelete(emp)} 
+                                  onClick={() => setDeleteEmpToggle({
+                                    active: true,
+                                    id: emp.id,
+                                  })} 
                                 />
                               </>
                             );
