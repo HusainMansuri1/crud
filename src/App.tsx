@@ -59,6 +59,9 @@ const App = () => {
     let stateCopy = JSON.parse(JSON.stringify(state));
     switch (action.type) {
       case ACTIONS.set:
+        return action.payload.data;
+
+      case ACTIONS.more:
         return [...state, ...action.payload.data];
 
       case ACTIONS.add:
@@ -319,7 +322,7 @@ const App = () => {
         })
         .then(editedData => {
           /** updating state on success */
-          empDispatch({ type: ACTIONS.set, payload: { data: editedData } });
+          empDispatch({ type: ACTIONS.more, payload: { data: editedData } });
           setApiLoadedCount(prevState => prevState + apiLoadMoreCount);
           setLoadInfo(prevState => ({ ...prevState, loading: false, success: true }));
         })

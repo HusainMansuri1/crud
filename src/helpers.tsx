@@ -3,6 +3,7 @@
  */
 export const ACTIONS = {
   set: '=',
+  more: '+=',
   add: '+',
   delete: '-',
   edit: '~'
