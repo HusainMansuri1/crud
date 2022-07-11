@@ -30,7 +30,7 @@ const SearchFilter = ({ loadInfo, searchQuery, setSearchQuery } : Props) => {
             type="search"
             disabled={!loadInfo.success || loadInfo.loading}
             allowClear
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={e => setSearchQuery(e.target.value.toLocaleLowerCase())}
           />
         </Form.Item>
       </Form>
